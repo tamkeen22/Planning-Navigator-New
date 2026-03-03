@@ -33,11 +33,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Prepare Root Index
+        run: |
+          cd "Planning navigator  Antigravity"
+          cp "planning-navigation-full.html" "index.html"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload only the project directory so it serves at the root level
+          path: './Planning navigator  Antigravity'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
