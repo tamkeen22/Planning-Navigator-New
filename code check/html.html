@@ -1,0 +1,127 @@
+
+<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+<script>
+  window.googletag = window.googletag || {cmd: []};
+</script>
+
+
+<style>
+        @media (max-width: 767px) {
+            .accordion-ad { display: flex; justify-content: center; align-items: center; }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.matchMedia('(max-width: 767px)').matches) return;
+
+            const idToSlot = {};
+            const definedIds = new Set();
+
+            function getElementSlug(item) {
+                const anchor = item && item.querySelector('.hack4-cms-anchor-section-2[id]');
+                if (anchor && anchor.id) return anchor.id;
+                if (anchor && anchor.getAttribute('data-target-id')) return anchor.getAttribute('data-target-id');
+                const header = item && item.querySelector('.home-faq-top [fs-list-field], .home-faq-top h1, .home-faq-top .text-size-medium-209');
+                if (header && header.textContent) return header.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+                return '';
+            }
+
+            function getItemIndex(item) {
+                const items = Array.prototype.slice.call(document.querySelectorAll('.product-header9_content-left .w-dyn-item'));
+                const idx = items.indexOf(item);
+                return idx >= 0 ? idx : Math.floor(Math.random() * 1e6);
+            }
+
+            function getAdDivId(item) {
+                const slug = getElementSlug(item) || 'item';
+                const idx = getItemIndex(item);
+                return 'div-gpt-mobile-acc-' + slug + '-' + idx;
+            }
+
+            function ensureAdContainer(item) {
+                const details = item && item.querySelector('.product-header9_details');
+                if (!details) return null;
+                let adDiv = details.querySelector('div[id^="div-gpt-mobile-acc-"]');
+                if (!adDiv) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'accordion-ad';
+                    adDiv = document.createElement('div');
+                    adDiv.id = getAdDivId(item);
+                    adDiv.style.minWidth = '320px';
+                    adDiv.style.minHeight = '50px';
+                    wrap.appendChild(adDiv);
+                    details.appendChild(wrap);
+                }
+                return adDiv;
+            }
+
+            function defineSlotIfNeeded(item) {
+                const adDiv = ensureAdContainer(item);
+                if (!adDiv) return null;
+                const adId = adDiv.id;
+                if (definedIds.has(adId)) return idToSlot[adId] || null;
+
+                const slug = getElementSlug(item) || 'unknown';
+                window.googletag = window.googletag || { cmd: [] };
+                googletag.cmd.push(function () {
+                    const slot = googletag
+                        .defineSlot('/124048874/320x50_Mobile_Banner', [[320, 50], [300, 50]], adId)
+                        .addService(googletag.pubads());
+                    slot.setTargeting('element', slug);
+                    slot.setTargeting('placement', 'mobile_accordion');
+                    idToSlot[adId] = slot;
+                    definedIds.add(adId);
+                });
+                return idToSlot[adId] || null;
+            }
+
+            function displayOrRefreshForItem(item) {
+                const adDiv = ensureAdContainer(item);
+                if (!adDiv) return;
+                const adId = adDiv.id;
+                defineSlotIfNeeded(item);
+                window.googletag = window.googletag || { cmd: [] };
+                googletag.cmd.push(function () {
+                    const el = document.getElementById(adId);
+                    if (!el) return;
+                    if (el.querySelector('iframe') && idToSlot[adId]) {
+                        googletag.pubads().refresh([idToSlot[adId]]);
+                    } else {
+                        googletag.display(adId);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.product-header9_content-left .home-faq-top').forEach(function (header) {
+                header.addEventListener('click', function () {
+                    const item = header.closest('.w-dyn-item');
+                    if (!item) return;
+                    setTimeout(function () { displayOrRefreshForItem(item); }, 150);
+                });
+            });
+
+            const panels = document.querySelectorAll('.product-header9_content-left .product-header9_details');
+            const mo = new MutationObserver(function (mutations) {
+                mutations.forEach(function (m) {
+                    if (m.type === 'attributes' && m.attributeName === 'style') {
+                        const panel = m.target;
+                        const isOpen = !/height:\s*0px/.test(panel.getAttribute('style') || '');
+                        if (isOpen) {
+                            const item = panel.closest('.w-dyn-item');
+                            if (item) displayOrRefreshForItem(item);
+                        }
+                    }
+                });
+            });
+            panels.forEach(function (p) { mo.observe(p, { attributes: true }); });
+        });
+    </script>
+
+
+
+
+
+
+
+
+

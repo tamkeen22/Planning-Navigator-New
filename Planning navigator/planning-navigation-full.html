@@ -468,12 +468,12 @@
             'PS2-04': {
                 category: 'Single-storey Extension – Detailed Checks',
                 group: 'detail',
-                question: 'Is the extension at the rear of the property and not in front of the main elevation?',
+                question: 'Is the extension at the front of the property, ahead of the main elevation?',
                 options: [
-                    { text: 'Yes', value: 'yes', next: ['PS2-05'] },
-                    { text: 'No', value: 'no', stop: true, result: 'Planning permission required.' }
+                    { text: 'Yes', value: 'yes', stop: true, result: 'Planning permission required — extensions in front of the main elevation are not permitted development.' },
+                    { text: 'No', value: 'no', next: ['PS2-05'] }
                 ],
-                guidance: 'Extensions must be to the rear; front extensions require planning permission.'
+                guidance: 'Extensions at the front of a property — ahead of the principal elevation — are not permitted under permitted development rights. If your extension is at the rear, this check does not apply to your project.'
             },
             'PS2-05': {
                 category: 'Single-storey Extension – Detailed Checks',
@@ -540,6 +540,7 @@
             'PS5-01': {
                 category: 'Garage / Conversion – Detailed Checks',
                 group: 'detail',
+                infoOnly: true,
                 question: 'Will the garage be converted into a habitable space (bedroom, office, etc.) or serviced (plumbing, kitchen, etc.)?',
                 options: [
                     { text: 'Yes', value: 'yes', next: ['PS5-02'] },
@@ -591,6 +592,7 @@
             'PS6-01': {
                 category: 'External Building – Detailed Checks',
                 group: 'detail',
+                infoOnly: true,
                 question: 'Will the building be habitable or include services (plumbing, kitchen, heating, electrics)?',
                 options: [
                     { text: 'Yes', value: 'yes', next: ['PS6-02'] },
@@ -621,12 +623,12 @@
             'PS6-04': {
                 category: 'External Building – Detailed Checks',
                 group: 'detail',
-                question: 'Is the building located at the rear or side of the house and at least 2m from any side boundary if taller than 2.5m?',
+                question: 'Is the outbuilding at the front of the house, or within 2m of a boundary and taller than 2.5m?',
                 options: [
-                    { text: 'Yes', value: 'yes', next: ['PS6-05'] },
-                    { text: 'No', value: 'no', stop: true, result: 'Planning permission required.' }
+                    { text: 'Yes', value: 'yes', stop: true, result: 'Planning permission required — outbuildings at the front or too close to a boundary exceed permitted development limits.' },
+                    { text: 'No', value: 'no', next: ['PS6-05'] }
                 ],
-                guidance: 'Buildings in front of the house or too close to boundaries require planning permission.'
+                guidance: 'Outbuildings positioned at the front of the house, or within 2m of any boundary if taller than 2.5m, require planning permission. If your building is at the rear or side and meets the boundary setback, this check does not apply to your project.'
             },
             'PS6-05': {
                 category: 'External Building – Detailed Checks',
@@ -796,6 +798,7 @@
             'PS11-06': {
                 category: 'Flat Conversion – Detailed Checks',
                 group: 'detail',
+                infoOnly: true,
                 question: 'Does the conversion involve structural work?',
                 options: [
                     { text: 'Yes', value: 'yes', next: ['PS11-07'] },
@@ -806,6 +809,7 @@
             'PS11-07': {
                 category: 'Flat Conversion – Detailed Checks',
                 group: 'detail',
+                infoOnly: true,
                 question: 'Will the conversion affect fire safety or access, for example where the building has more than one storey?',
                 options: [
                     { text: 'Yes', value: 'yes' },
@@ -1347,6 +1351,26 @@
             return iconMap[optionValue] || iconMap['yes'];
         }
 
+        // ── CALLOUT HELPERS ──────────────────────────────────────────────────────
+        // Returns 'callout--info' for informational-only questions,
+        // '' (default yellow warning) for questions with a stop on Yes,
+        // or 'callout--positive' (green) for non-stop, non-info questions.
+        function getCalloutClass(q) {
+            if (!q) return '';
+            if (q.infoOnly) return 'callout--info';
+            const yesOpt = q.options && q.options.find(o => o.value === 'yes');
+            if (yesOpt && yesOpt.stop) return ''; // warning (default yellow)
+            return 'callout--positive'; // green — selecting this doesn't block the project
+        }
+
+        function getCalloutIcon(q) {
+            if (!q) return '⚠️';
+            if (q.infoOnly) return 'ℹ️';
+            const yesOpt = q.options && q.options.find(o => o.value === 'yes');
+            if (yesOpt && yesOpt.stop) return '⚠️';
+            return '✅';
+        }
+
         function renderGroup(groupId) {
             const g = groups[groupId];
             const container = document.getElementById('questionContainer');
@@ -1437,7 +1461,7 @@
                                         guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                         ${isSelected ? 'selected' : ''}
                                     ></option-row>
-                                    ${isSelected && q.guidance ? `<div class="callout"><span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                    ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
                                 `;
                 }).join('')}
                             </div>
@@ -1477,7 +1501,7 @@
                             if (!calloutEl || !calloutEl.classList.contains('callout')) {
                                 calloutEl = document.createElement('div');
                                 calloutEl.className = 'callout';
-                                calloutEl.innerHTML = `<span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.innerHTML = `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div>`;
                                 row.parentNode.insertBefore(calloutEl, row.nextSibling);
                             }
                         }
@@ -1595,7 +1619,7 @@
                                                 guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                                 ${isSelected ? 'selected' : ''}
                                             ></option-row>
-                                            ${isSelected && q.guidance ? `<div class="callout"><span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                            ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
                                         `;
                     } else {
                         // Phase 2: Accordion rows for project types, or Standard rows if no sub-questions
@@ -1619,7 +1643,7 @@
                                                             guidance="${(psQ.guidance || '').replace(/"/g, '&quot;')}"
                                                             ${psAnsValue === 'yes' ? 'selected' : ''}
                                                         ></option-row>
-                                                        ${psAnsValue === 'yes' && psQ.guidance ? `<div class="callout"><span class="callout-icon">⚠️</span><div class="callout-text">${psQ.guidance}</div></div>` : ''}
+                                                        ${psAnsValue === 'yes' && psQ.guidance ? `<div class="callout ${getCalloutClass(psQ)}"><span class="callout-icon">${getCalloutIcon(psQ)}</span><div class="callout-text">${psQ.guidance}</div></div>` : ''}
                                                     `;
                                 }).join('');
                             }
@@ -1637,7 +1661,7 @@
                                                 >
                                                     ${subQuestionsHtml}
                                                 </accordion-question>
-                                                ${isSelected && q.guidance ? `<div class="callout"><span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                                ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
                                             `;
                         } else {
                             return `
@@ -1650,7 +1674,7 @@
                                                     guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                                     ${isSelected ? 'selected' : ''}
                                                 ></option-row>
-                                                ${isSelected && q.guidance ? `<div class="callout"><span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                                ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
                                             `;
                         }
                     }
@@ -1685,7 +1709,8 @@
                             if (!calloutEl || !calloutEl.classList.contains('callout')) {
                                 calloutEl = document.createElement('div');
                                 calloutEl.className = 'callout';
-                                calloutEl.innerHTML = `<span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.innerHTML = `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.className = 'callout ' + getCalloutClass(q);
                                 e.target.parentNode.insertBefore(calloutEl, e.target.nextSibling);
                             }
                         }
@@ -1705,9 +1730,31 @@
                     const q = questions[qid];
                     if (!q) return;
 
-                    if (value === 'yes') {
+                    // Determine if selected: value can be 'yes', ['yes'], or []
+                    const isSelected = value === 'yes' || (Array.isArray(value) && value.includes('yes'));
+
+                    if (isSelected) {
                         const yesOption = q.options.find(o => o.value === 'yes');
                         answers[qid] = { question: q.question, answer: yesOption ? yesOption.text : 'Yes', value: 'yes' };
+
+                        // ONE ACCORDION OPEN AT A TIME:
+                        // Close any other expanded accordion, but preserve their sub-question answers
+                        container.querySelectorAll('accordion-question[selected]').forEach(otherEl => {
+                            if (otherEl !== e.target) {
+                                const otherHeader = otherEl.querySelector('.accordion-header');
+                                if (otherHeader && otherEl.hasAttribute('selected')) {
+                                    // Only close the body — do NOT deselect the parent row
+                                    const otherBody = otherEl.querySelector('.accordion-body');
+                                    const otherChevron = otherEl.querySelector('.acc-chevron');
+                                    if (otherBody) {
+                                        otherBody.style.maxHeight = '0';
+                                        otherBody.style.opacity = '0';
+                                        otherBody.style.borderTop = 'none';
+                                    }
+                                    if (otherChevron) otherChevron.style.transform = 'rotate(0deg)';
+                                }
+                            }
+                        });
                     } else {
                         delete answers[qid];
 
@@ -1725,6 +1772,7 @@
                     }
                     updateContinueState();
                 });
+
 
                 // None option handler
                 const noneBtn = container.querySelector('#noneOption');
@@ -1806,7 +1854,7 @@
                                         guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                         ${isSelected ? 'selected' : ''}
                                     ></option-row>
-                                    ${isSelected && q.guidance ? `<div class="callout"><span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                    ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
                                 `;
                 }).join('')}
                             </div>
@@ -1849,7 +1897,8 @@
                             if (!calloutEl || !calloutEl.classList.contains('callout')) {
                                 calloutEl = document.createElement('div');
                                 calloutEl.className = 'callout';
-                                calloutEl.innerHTML = `<span class="callout-icon">⚠️</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.innerHTML = `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.className = 'callout ' + getCalloutClass(q);
                                 row.parentNode.insertBefore(calloutEl, row.nextSibling);
                             }
                         }

@@ -1303,6 +1303,31 @@ body {
   color: #92400e;
 }
 
+/* Callout variant: positive (does not apply / safe outcome) */
+.callout--positive {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.callout--positive .callout-text {
+  color: #065f46;
+}
+.callout--positive .callout-text strong {
+  color: #064e3b;
+}
+
+/* Callout variant: info (informational, non-blocking) */
+.callout--info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.callout--info .callout-text {
+  color: #1e40af;
+}
+.callout--info .callout-text strong {
+  color: #1e3a8a;
+}
+
+
 .lg-option-card.selected {
   border-color: var(--green-border);
   background: var(--green-bg);

@@ -1,0 +1,423 @@
+
+<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+<script>
+  window.googletag = window.googletag || {cmd: []};
+</script>
+
+
+<style>
+        @media (max-width: 767px) {
+            .accordion-ad { display: flex; justify-content: center; align-items: center; }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.matchMedia('(max-width: 767px)').matches) return;
+
+            const idToSlot = {};
+            const definedIds = new Set();
+
+            function getElementSlug(item) {
+                const anchor = item && item.querySelector('.hack4-cms-anchor-section-2[id]');
+                if (anchor && anchor.id) return anchor.id;
+                if (anchor && anchor.getAttribute('data-target-id')) return anchor.getAttribute('data-target-id');
+                const header = item && item.querySelector('.home-faq-top [fs-list-field], .home-faq-top h1, .home-faq-top .text-size-medium-209');
+                if (header && header.textContent) return header.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+                return '';
+            }
+
+            function getItemIndex(item) {
+                const items = Array.prototype.slice.call(document.querySelectorAll('.product-header9_content-left .w-dyn-item'));
+                const idx = items.indexOf(item);
+                return idx >= 0 ? idx : Math.floor(Math.random() * 1e6);
+            }
+
+            function getAdDivId(item) {
+                const slug = getElementSlug(item) || 'item';
+                const idx = getItemIndex(item);
+                return 'div-gpt-mobile-acc-' + slug + '-' + idx;
+            }
+
+            function ensureAdContainer(item) {
+                const details = item && item.querySelector('.product-header9_details');
+                if (!details) return null;
+                let adDiv = details.querySelector('div[id^="div-gpt-mobile-acc-"]');
+                if (!adDiv) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'accordion-ad';
+                    adDiv = document.createElement('div');
+                    adDiv.id = getAdDivId(item);
+                    adDiv.style.minWidth = '320px';
+                    adDiv.style.minHeight = '50px';
+                    wrap.appendChild(adDiv);
+                    details.appendChild(wrap);
+                }
+                return adDiv;
+            }
+
+            function defineSlotIfNeeded(item) {
+                const adDiv = ensureAdContainer(item);
+                if (!adDiv) return null;
+                const adId = adDiv.id;
+                if (definedIds.has(adId)) return idToSlot[adId] || null;
+
+                const slug = getElementSlug(item) || 'unknown';
+                window.googletag = window.googletag || { cmd: [] };
+                googletag.cmd.push(function () {
+                    const slot = googletag
+                        .defineSlot('/124048874/320x50_Mobile_Banner', [[320, 50], [300, 50]], adId)
+                        .addService(googletag.pubads());
+                    slot.setTargeting('element', slug);
+                    slot.setTargeting('placement', 'mobile_accordion');
+                    idToSlot[adId] = slot;
+                    definedIds.add(adId);
+                });
+                return idToSlot[adId] || null;
+            }
+
+            function displayOrRefreshForItem(item) {
+                const adDiv = ensureAdContainer(item);
+                if (!adDiv) return;
+                const adId = adDiv.id;
+                defineSlotIfNeeded(item);
+                window.googletag = window.googletag || { cmd: [] };
+                googletag.cmd.push(function () {
+                    const el = document.getElementById(adId);
+                    if (!el) return;
+                    if (el.querySelector('iframe') && idToSlot[adId]) {
+                        googletag.pubads().refresh([idToSlot[adId]]);
+                    } else {
+                        googletag.display(adId);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.product-header9_content-left .home-faq-top').forEach(function (header) {
+                header.addEventListener('click', function () {
+                    const item = header.closest('.w-dyn-item');
+                    if (!item) return;
+                    setTimeout(function () { displayOrRefreshForItem(item); }, 150);
+                });
+            });
+
+            const panels = document.querySelectorAll('.product-header9_content-left .product-header9_details');
+            const mo = new MutationObserver(function (mutations) {
+                mutations.forEach(function (m) {
+                    if (m.type === 'attributes' && m.attributeName === 'style') {
+                        const panel = m.target;
+                        const isOpen = !/height:\s*0px/.test(panel.getAttribute('style') || '');
+                        if (isOpen) {
+                            const item = panel.closest('.w-dyn-item');
+                            if (item) displayOrRefreshForItem(item);
+                        }
+                    }
+                });
+            });
+            panels.forEach(function (p) { mo.observe(p, { attributes: true }); });
+        });
+    </script>
+
+<!-- tab index code -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function isVisible(el) {
+      if (!el || !(el instanceof Element)) return false;
+      if (el.offsetParent === null) return false;
+      var style = window.getComputedStyle(el);
+      return style.visibility !== 'hidden' && style.display !== 'none' && style.opacity !== '0';
+    }
+
+    function uniqueInOrder(list) {
+      var seen = new Set();
+      var out = [];
+      list.forEach(function (el) {
+        if (!el || !(el instanceof Element)) return;
+        if (!isVisible(el)) return;
+        if (seen.has(el)) return;
+        seen.add(el);
+        out.push(el);
+      });
+      return out;
+    }
+
+    function queryByText(selector, textArray) {
+      var nodes = Array.prototype.slice.call(document.querySelectorAll(selector));
+      var out = [];
+      var lowerTexts = textArray.map(function (t) { return String(t).toLowerCase(); });
+      nodes.forEach(function (n) {
+        var txt = (n.textContent || '').trim().toLowerCase();
+        if (lowerTexts.some(function (t) { return txt.indexOf(t) !== -1; })) {
+          out.push(n);
+        }
+      });
+      return out;
+    }
+
+    function getHeaderGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('header a, header button, header [role="button"]')));
+      return uniqueInOrder(list);
+    }
+
+    function getSectionGroup() {
+      var list = [];
+      var sections = queryByText(
+        'a, button, [role="button"], h1, h2, h3, .text-size-medium-209, .cta38_link-text-copy-copy',
+        ['exterior', 'interior', 'rear', 'front']
+      );
+      sections.forEach(function (n) {
+        var focusEl = n.closest('a, button, [role="button"]') || n;
+        list.push(focusEl);
+      });
+      return uniqueInOrder(list);
+    }
+
+    function getLeftListGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('.product-header9_content-left .home-faq-list, .product-header9_content-left .home-faq-block')));
+      return uniqueInOrder(list);
+    }
+
+    function getSearchGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('input[type="search"], input.filter_search, .search-button-3')));
+      return uniqueInOrder(list);
+    }
+
+    function getListItemGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('.product-header9_content-left .w-dyn-item a[href]')));
+      return uniqueInOrder(list);
+    }
+
+    function getHouseTypeGroup() {
+      var list = [];
+      var shopFlats = queryByText(
+        'a, button, [role="button"], .w-dropdown-toggle, .text-block-109, h3, .cta38_link-text-copy-copy, .cta38_link-text-copy-copy-2',
+        ['shop', 'flats', 'maisonettes']
+      );
+      shopFlats.forEach(function (n) {
+        var focusEl = n.closest('a, button, [role="button"], .w-dropdown-toggle') || n;
+        list.push(focusEl);
+      });
+      var terraced = queryByText('.text-block-109, .w-dropdown-toggle, a, button, [role="button"]', ['terraced']);
+      terraced.forEach(function (n) {
+        var focusEl = n.closest('.w-dropdown-toggle, a, button, [role="button"]') || n;
+        list.push(focusEl);
+      });
+      list = list.concat(Array.from(document.querySelectorAll('.dropdown-toggle.w-dropdown-toggle, #w-dropdown-toggle-0, #w-dropdown-toggle-1')));
+      return uniqueInOrder(list);
+    }
+
+    function getHouseViewGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('.house-__dots a, a.house-__dots, a[data-room-id], a[data-room-id-2], .house-__dots [role="button"], .house-__dots button')));
+      list = list.concat(Array.from(document.querySelectorAll('.house-__dots .map-pin-tooltip a, .house-__dots .tooltip a')));
+      return uniqueInOrder(list);
+    }
+
+    function applyOrderedTabIndex() {
+      var idx = 1;
+      document.querySelectorAll('[data-ih-tab-ordered="true"]').forEach(function (el) {
+        el.removeAttribute('data-ih-tab-ordered');
+        el.removeAttribute('tabindex');
+      });
+
+      var groups = [
+        getHeaderGroup(),
+        getSectionGroup(),
+        getLeftListGroup(),
+        getSearchGroup(),
+        getListItemGroup(),
+        getHouseTypeGroup(),
+        getHouseViewGroup()
+      ];
+
+      groups.forEach(function (group) {
+        group.forEach(function (el) {
+          try {
+            el.setAttribute('tabindex', String(idx++));
+            el.setAttribute('data-ih-tab-ordered', 'true');
+          } catch (e) {}
+        });
+      });
+    }
+
+    setTimeout(applyOrderedTabIndex, 400);
+
+    var mo = new MutationObserver(function () { setTimeout(applyOrderedTabIndex, 50); });
+    if (document.body) {
+      mo.observe(document.body, { childList: true, subtree: true, attributes: true });
+    }
+
+    window.addEventListener('resize', function () { setTimeout(applyOrderedTabIndex, 100); });
+  });
+</script>
+
+
+
+
+
+<!-- tab index code -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function isVisible(el) {
+      if (!el || !(el instanceof Element)) return false;
+      if (el.offsetParent === null) return false;
+      var style = window.getComputedStyle(el);
+      return style.visibility !== 'hidden' && style.display !== 'none' && style.opacity !== '0';
+    }
+
+    function uniqueInOrder(list) {
+      var seen = new Set();
+      var out = [];
+      list.forEach(function (el) {
+        if (!el || !(el instanceof Element)) return;
+        if (!isVisible(el)) return;
+        if (seen.has(el)) return;
+        seen.add(el);
+        out.push(el);
+      });
+      return out;
+    }
+
+    function queryByText(selector, textArray) {
+      var nodes = Array.prototype.slice.call(document.querySelectorAll(selector));
+      var out = [];
+      var lowerTexts = textArray.map(function (t) { return String(t).toLowerCase(); });
+      nodes.forEach(function (n) {
+        var txt = (n.textContent || '').trim().toLowerCase();
+        if (lowerTexts.some(function (t) { return txt.indexOf(t) !== -1; })) {
+          out.push(n);
+        }
+      });
+      return out;
+    }
+
+    function getHeaderGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('header a, header button, header [role="button"]')));
+      return uniqueInOrder(list);
+    }
+
+    function getSectionGroup() {
+      var list = [];
+      var sections = queryByText(
+        'a, button, [role="button"], h1, h2, h3, .text-size-medium-209, .cta38_link-text-copy-copy',
+        ['exterior', 'interior', 'rear', 'front']
+      );
+      sections.forEach(function (n) {
+        var focusEl = n.closest('a, button, [role="button"]') || n;
+        list.push(focusEl);
+      });
+      return uniqueInOrder(list);
+    }
+
+    function getLeftListGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('.product-header9_content-left .home-faq-list, .product-header9_content-left .home-faq-block')));
+      return uniqueInOrder(list);
+    }
+
+    function getSearchGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('input[type="search"], input.filter_search, .search-button-3')));
+      return uniqueInOrder(list);
+    }
+
+    function getListItemGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('.product-header9_content-left .w-dyn-item a[href]')));
+      return uniqueInOrder(list);
+    }
+
+    function getHouseTypeGroup() {
+      var list = [];
+      var shopFlats = queryByText(
+        'a, button, [role="button"], .w-dropdown-toggle, .text-block-109, h3, .cta38_link-text-copy-copy, .cta38_link-text-copy-copy-2',
+        ['shop', 'flats', 'maisonettes']
+      );
+      shopFlats.forEach(function (n) {
+        var focusEl = n.closest('a, button, [role="button"], .w-dropdown-toggle') || n;
+        list.push(focusEl);
+      });
+      var terraced = queryByText('.text-block-109, .w-dropdown-toggle, a, button, [role="button"]', ['terraced']);
+      terraced.forEach(function (n) {
+        var focusEl = n.closest('.w-dropdown-toggle, a, button, [role="button"]') || n;
+        list.push(focusEl);
+      });
+      list = list.concat(Array.from(document.querySelectorAll('.dropdown-toggle.w-dropdown-toggle, #w-dropdown-toggle-0, #w-dropdown-toggle-1')));
+      return uniqueInOrder(list);
+    }
+
+    function getHouseViewGroup() {
+      var list = [];
+      list = list.concat(Array.from(document.querySelectorAll('.house-__dots a, a.house-__dots, a[data-room-id], a[data-room-id-2], .house-__dots [role="button"], .house-__dots button')));
+      list = list.concat(Array.from(document.querySelectorAll('.house-__dots .map-pin-tooltip a, .house-__dots .tooltip a')));
+      return uniqueInOrder(list);
+    }
+
+    function applyOrderedTabIndex() {
+      var idx = 1;
+      document.querySelectorAll('[data-ih-tab-ordered="true"]').forEach(function (el) {
+        el.removeAttribute('data-ih-tab-ordered');
+        el.removeAttribute('tabindex');
+      });
+
+      var groups = [
+        getHeaderGroup(),
+        getSectionGroup(),
+        getLeftListGroup(),
+        getSearchGroup(),
+        getListItemGroup(),
+        getHouseTypeGroup(),
+        getHouseViewGroup()
+      ];
+
+      groups.forEach(function (group) {
+        group.forEach(function (el) {
+          try {
+            el.setAttribute('tabindex', String(idx++));
+            el.setAttribute('data-ih-tab-ordered', 'true');
+          } catch (e) {}
+        });
+      });
+    }
+
+    setTimeout(applyOrderedTabIndex, 400);
+
+ var mo = new MutationObserver(function () { setTimeout(applyOrderedTabIndex, 50); });
+    if (document.body) {
+      mo.observe(document.body, { childList: true, subtree: true, attributes: true });
+    }
+
+    window.addEventListener('resize', function () { setTimeout(applyOrderedTabIndex, 100); });
+  });
+</script>
+
+
+<script>
+  const openBtn  = document.getElementById('openBtn');
+  const closeBtn = document.getElementById('closeBtn');
+  const overlay  = document.getElementById('overlay');
+
+  openBtn.addEventListener('click', () => overlay.style.display = 'flex');
+  closeBtn.addEventListener('click', () => overlay.style.display = 'none');
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.style.display = 'none';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') overlay.style.display = 'none';
+  });
+</script>
+
+<!-- [Finsweet Attributes] Star Rating -->
+<script>(()=>{var t="https://cdn.jsdelivr.net/npm/@finsweet/attributes-starrating@1/starrating.js",e=document.querySelector(`script[src="${t}"]`);e||(e=document.createElement("script"),e.async=!0,e.src=t,document.head.append(e));})();</script>
+
+
+
+
