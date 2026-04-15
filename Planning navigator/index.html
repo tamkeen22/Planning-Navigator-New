@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planning Navigator – Home</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="globals.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,42 +14,42 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: white !important; /* Ensure landing page stays white */
+      background: white !important;
+      /* Ensure landing page stays white */
     }
+
     .hero-gradient {
-      background: linear-gradient(to top right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);
+      background: linear-gradient(to top right, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.4) 40%, transparent 100%);
     }
   </style>
 </head>
+
 <body class="min-h-screen bg-white">
   <nav-bar></nav-bar>
 
   <!-- Section 1: Hero with aerial photo background -->
   <section class="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
-    <div 
-      class="absolute inset-0 bg-cover bg-center"
-      style="background-image: url('https://images.unsplash.com/photo-1614548323185-4b6f4edcf9e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxVSyUyMHJlc2lkZW50aWFsJTIwbmVpZ2hib3Job29kJTIwYWVyaWFsfGVufDF8fHx8MTc3NjI1MTUwOXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')"
-    >
+    <div class="absolute inset-0 bg-cover bg-center"
+      style="background-image: url('https://images.unsplash.com/photo-1614548323185-4b6f4edcf9e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxVSyUyMHJlc2lkZW50aWFsJTIwbmVpZ2hib3Job29kJTIwYWVyaWFsfGVufDF8fHx8MTc3NjI1MTUwOXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')">
       <!-- Dark overlay gradient -->
       <div class="absolute inset-0 hero-gradient"></div>
     </div>
 
     <div class="relative z-10 max-w-[1100px] mx-auto px-6 h-full flex items-center">
-      <div class="max-w-[520px]">
-        <a href="#" class="text-[#1b76d8] text-xs underline mb-3 inline-block">
-          Planning Navigator
-        </a>
-        <h1 class="text-white text-[42px] md:text-[48px] font-bold leading-[1.1] mb-6">
-          Got an idea for your home or land?
+      <div class="max-w-[700px] py-12">
+        <div class="inline-flex items-center gap-2 mb-4">
+          <span class="text-[#0d7490] font-bold text-sm tracking-wide">Planning Navigator</span>
+        </div>
+        <h1 class="text-white text-[56px] md:text-[68px] font-extrabold leading-[1.05] tracking-tight mb-8">
+          Got an idea for your<br>home or land?
         </h1>
-        <p class="text-white text-[15px] leading-[1.7] max-w-[420px] mb-6">
+        <p class="text-white/90 text-[18px] md:text-[20px] leading-[1.6] max-w-[500px] mb-10 font-medium">
           Whether it's an extension, loft conversion, annex, garage, outbuilding, or a change of use — answer a few simple questions to understand what may be possible for your project.
         </p>
-        <button 
-          onclick="window.location.href='planning-navigation-full.html'"
-          class="bg-[#1b76d8] text-white px-8 py-3.5 rounded-full text-sm font-semibold hover:bg-[#1565c0] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-        >
+        <button onclick="window.location.href='planning-navigation-full.html'"
+          class="bg-[#1b76d8] text-white px-10 py-4 rounded-full text-[16px] font-bold hover:bg-[#1565c0] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-2xl flex items-center gap-3">
           Start or view your application
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
         </button>
       </div>
     </div>
@@ -68,11 +70,8 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Card 1 -->
         <div class="bg-white rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.05)] p-5 flex gap-6 items-start">
-          <img 
-            src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" 
-            alt="Restriction checks" 
-            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0"
-          >
+          <img src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" alt="Restriction checks"
+            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0">
           <div class="flex-1">
             <h3 class="text-[#0f213a] text-[15px] font-bold mb-2">
               Check property & location restrictions
@@ -84,11 +83,8 @@
         </div>
         <!-- Card 2 -->
         <div class="bg-white rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.05)] p-5 flex gap-6 items-start">
-          <img 
-            src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" 
-            alt="Project identification" 
-            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0"
-          >
+          <img src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" alt="Project identification"
+            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0">
           <div class="flex-1">
             <h3 class="text-[#0f213a] text-[15px] font-bold mb-2">
               Identify your project type
@@ -100,11 +96,8 @@
         </div>
         <!-- Card 3 -->
         <div class="bg-white rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.05)] p-5 flex gap-6 items-start">
-          <img 
-            src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" 
-            alt="Specific limits" 
-            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0"
-          >
+          <img src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" alt="Specific limits"
+            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0">
           <div class="flex-1">
             <h3 class="text-[#0f213a] text-[15px] font-bold mb-2">
               Understand the specific limits
@@ -116,17 +109,15 @@
         </div>
         <!-- Card 4 -->
         <div class="bg-white rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.05)] p-5 flex gap-6 items-start">
-          <img 
-            src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" 
-            alt="Site issues" 
-            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0"
-          >
+          <img src="assets/home/36bcf3630d13ff3f404d2805c409bf5bbe2d20e4.png" alt="Site issues"
+            class="w-[120px] h-[90px] object-cover rounded-lg shrink-0">
           <div class="flex-1">
             <h3 class="text-[#0f213a] text-[15px] font-bold mb-2">
               Spot wider site issues
             </h3>
             <p class="text-[#727272] text-[13px] leading-[1.6]">
-              Flood risk, highways, trees, ecology, contamination, and archaeology can all affect whether work can go ahead.
+              Flood risk, highways, trees, ecology, contamination, and archaeology can all affect whether work can go
+              ahead.
             </p>
           </div>
         </div>
@@ -135,58 +126,46 @@
   </section>
 
   <!-- Section 3: By the end, you'll understand -->
-  <section class="bg-gradient-to-r from-[#1a3faa] to-[#2e5fd9] py-16 md:py-20 overflow-hidden">
+  <section class="bg-gradient-to-br from-[#1b76d8] via-[#1b76d8] to-[#0c1f38] py-20 md:py-28 overflow-hidden">
     <div class="max-w-[1200px] mx-auto px-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <!-- Left column - text content -->
         <div class="text-white">
-          <h2 class="text-[28px] md:text-[32px] font-bold leading-[1.3] mb-8 max-w-[340px]">
-            By the end, you'll understand whether your project
+          <h2 class="text-[36px] md:text-[42px] font-extrabold leading-[1.2] mb-10 max-w-[450px]">
+            By the end, you'll understand whether your project:
           </h2>
-          <div class="space-y-5">
-            <div class="flex items-start gap-4">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>
+          <div class="space-y-6">
+            <div class="flex items-center gap-5">
+              <div class="shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                <i data-lucide="check" class="w-4 h-4 text-white"></i>
               </div>
-              <p class="text-white text-[15px] font-semibold leading-[1.6]">
-                Is likely permitted development
-              </p>
+              <p class="text-white text-[17px] font-bold">Is likely permitted development</p>
             </div>
-            <div class="flex items-start gap-4">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>
+            <div class="flex items-center gap-5">
+              <div class="shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                <i data-lucide="check" class="w-4 h-4 text-white"></i>
               </div>
-              <p class="text-white text-[15px] font-semibold leading-[1.6]">
-                May need planning permission
-              </p>
+              <p class="text-white text-[17px] font-bold">May need planning permission</p>
             </div>
-            <div class="flex items-start gap-4">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>
+            <div class="flex items-center gap-5">
+              <div class="shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                <i data-lucide="check" class="w-4 h-4 text-white"></i>
               </div>
-              <p class="text-white text-[15px] font-semibold leading-[1.6]">
-                Needs Building Control approval
-              </p>
+              <p class="text-white text-[17px] font-bold">Needs Building Control approval</p>
             </div>
-            <div class="flex items-start gap-4">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>
+            <div class="flex items-center gap-5">
+              <div class="shrink-0 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
+                <i data-lucide="check" class="w-4 h-4 text-white"></i>
               </div>
-              <p class="text-white text-[15px] font-semibold leading-[1.6]">
-                Would benefit from professional advice
-              </p>
+              <p class="text-white text-[17px] font-bold">Would benefit from professional advice</p>
             </div>
           </div>
         </div>
 
         <!-- Right column - Interactive House mockup -->
-        <div class="relative -my-8 lg:-my-16">
-          <div class="bg-white rounded-xl shadow-[0_24px_48px_rgba(0,0,0,0.3)] overflow-hidden">
-            <img 
-              src="assets/home/Macbook.png" 
-              alt="Interactive House tool interface" 
-              class="w-full h-auto"
-            >
+        <div class="relative lg:-mr-32">
+          <div class="transform translate-x-4">
+            <img src="assets/home/Macbook.png" alt="Interactive House tool interface" class="img-macbook w-full h-auto drop-shadow-[0_35px_35px_rgba(0,0,0,0.6)]">
           </div>
         </div>
       </div>
@@ -199,12 +178,8 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <!-- Left column - Interactive House mockup -->
         <div class="order-2 lg:order-1">
-          <div class="bg-white rounded-xl shadow-[0_24px_48px_rgba(0,0,0,0.15)] overflow-hidden">
-            <img 
-              src="assets/home/Macbook - IH.png" 
-              alt="Interactive House visualization" 
-              class="w-full h-auto"
-            >
+          <div class="img-macbook-ih">
+            <img src="assets/home/Macbook - IH.png" alt="Interactive House visualization" class="w-full h-auto">
           </div>
         </div>
 
@@ -217,14 +192,11 @@
             Interactive House
           </h2>
           <p class="text-[#727272] text-[15px] leading-[1.7] mb-8">
-            The Interactive House is a great place to start. It gives you a simple visual way to explore common home improvement projects before using this more detailed check.
+            The Interactive House is a great place to start. It gives you a simple visual way to explore common home
+            improvement projects before using this more detailed check.
           </p>
-          <a 
-            href="https://interactive.planningportal.co.uk"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 bg-[#1b76d8] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#1565c0] transition-colors"
-          >
+          <a href="https://interactive.planningportal.co.uk" target="_blank" rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 bg-[#1b76d8] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#1565c0] transition-colors">
             Visit Interactive House →
           </a>
         </div>
@@ -232,51 +204,54 @@
     </div>
   </section>
 
-  <!-- Section 5: Before you start -->
-  <section class="bg-[#f5f5f5] py-16 md:py-20">
-    <div class="max-w-[1100px] mx-auto px-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <!-- Left column - image -->
-        <div class="rounded-xl overflow-hidden aspect-[4/3]">
-          <img 
-            src="https://images.unsplash.com/photo-1647085215540-ba65ac35f182?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjByZXZpZXdpbmclMjBhcmNoaXRlY3R1cmFsJTIwcGxhbnMlMjBsYXB0b3B8ZW58MXx8fHwxNzc2MjUxNTEwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral" 
-            alt="Person reviewing architectural plans" 
-            class="w-full h-full object-cover"
-          >
+  <!-- Section 5: Before you start (Overlapping Layout) -->
+  <section class="bg-white py-20 px-6">
+    <div class="max-w-[1100px] mx-auto relative">
+      <div class="grid grid-cols-1 md:grid-cols-12 items-center">
+        <!-- Left Column: Background Image -->
+        <div class="md:col-span-7 relative z-0">
+          <div class="rounded-3xl overflow-hidden aspect-[16/10] shadow-xl">
+            <img
+              src="https://images.unsplash.com/photo-1647085215540-ba65ac35f182?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjByZXZpZXdpbmclMjBhcmNoaXRlY3R1cmFsJTIwcGxhbnMlMjBsYXB0b3B8ZW58MXx8fHwxNzc2MjUxNTEwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+              alt="Person reviewing architectural plans" 
+              class="w-full h-full object-cover">
+          </div>
         </div>
 
-        <!-- Right column - text content -->
-        <div>
-          <h2 class="text-[#0f213a] text-[28px] font-bold mb-4">
-            Before you start
-          </h2>
-          <p class="text-[#727272] text-[15px] mb-6">
-            To get the best result, it helps to have:
-          </p>
-          <div class="space-y-4">
-            <div class="flex items-start gap-3">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-[#1b76d8] flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-white"></i>
+        <!-- Right Column: Overlapping Card -->
+        <div class="md:col-span-6 md:col-start-6 md:-ml-40 mt-[-60px] md:mt-0 relative z-10">
+          <div class="bg-white rounded-[40px] p-8 md:p-14 shadow-[0_30px_60px_rgba(0,0,0,0.12)] border border-[#e5eaf2]">
+            <h2 class="text-[#000] text-[40px] font-bold mb-4 leading-tight">
+              Before you start
+            </h2>
+            <p class="text-[#000] text-[18px] mb-10 font-medium">
+              To get the best result, it helps to have:
+            </p>
+            <div class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div class="shrink-0 w-6 h-6 rounded-full bg-[#1b76d8] flex items-center justify-center mt-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+                </div>
+                <p class="text-[#1a1a1a] text-[17px] font-semibold leading-[1.5]">
+                  A simple idea of what you want to build, change, or convert
+                </p>
               </div>
-              <p class="text-[#0f213a] text-[14px] leading-[1.6]">
-                A simple idea of what you want to build, change, or convert
-              </p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-[#1b76d8] flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-white"></i>
+              <div class="flex items-start gap-4">
+                <div class="shrink-0 w-6 h-6 rounded-full bg-[#1b76d8] flex items-center justify-center mt-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+                </div>
+                <p class="text-[#1a1a1a] text-[17px] font-semibold leading-[1.5]">
+                  Rough measurements — height, width, depth, or distance to boundaries
+                </p>
               </div>
-              <p class="text-[#0f213a] text-[14px] leading-[1.6]">
-                Rough measurements — height, width, depth, or distance to boundaries
-              </p>
-            </div>
-            <div class="flex items-start gap-3">
-              <div class="shrink-0 w-5 h-5 rounded-full bg-[#1b76d8] flex items-center justify-center mt-0.5">
-                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-white"></i>
+              <div class="flex items-start gap-4">
+                <div class="shrink-0 w-6 h-6 rounded-full bg-[#1b76d8] flex items-center justify-center mt-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+                </div>
+                <p class="text-[#1a1a1a] text-[17px] font-semibold leading-[1.5]">
+                  Useful site details — nearby trees, previous extensions, access, or anything unusual
+                </p>
               </div>
-              <p class="text-[#0f213a] text-[14px] leading-[1.6]">
-                Useful site details — nearby trees, previous extensions, access, or anything unusual
-              </p>
             </div>
           </div>
         </div>
@@ -285,29 +260,27 @@
   </section>
 
   <!-- Section 6: Need help strip -->
-  <section class="bg-white border-t border-gray-200 py-6">
-    <div class="max-w-[1100px] mx-auto px-6">
-      <p class="text-[#0f213a] text-sm font-semibold mb-2">Need help?</p>
-      <p class="text-[#727272] text-[13px] leading-[1.6]">
-        Don't worry if you have rough estimates — this tool is designed to help you explore what may be possible before committing to final plans.
+  <section class="bg-white py-12 px-6">
+    <div class="max-w-[1100px] mx-auto">
+      <div class="w-full h-[1px] bg-[#e5eaf2] mb-10"></div>
+      <h2 class="text-[#0c1f38] text-[28px] font-bold mb-4">Need help?</h2>
+      <p class="text-[#4a6278] text-[18px] leading-[1.6]">
+        Don't worry if you only have rough estimates — this tool is designed to help you explore what may be possible before committing to final plans.
       </p>
     </div>
   </section>
 
   <!-- Sticky footer CTA -->
-  <div 
-    id="sticky-footer"
-    class="fixed bottom-0 left-0 right-0 bg-[#1a1a2e] z-50 transition-transform duration-300 translate-y-full"
-  >
+  <div id="sticky-footer"
+    class="fixed bottom-0 left-0 right-0 bg-[#1a1a2e] z-50 transition-transform duration-300 translate-y-full">
     <div class="max-w-[1100px] mx-auto px-6 py-4">
       <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <p class="text-white text-[13px] md:text-sm max-w-[600px] leading-[1.6]">
-          The questions are designed for homeowners, landowners, and anyone without planning experience, so you do not need to know technical terms or planning rules before you begin.
+          The questions are designed for homeowners, landowners, and anyone without planning experience, so you do not
+          need to know technical terms or planning rules before you begin.
         </p>
-        <button 
-          onclick="window.location.href='planning-navigation-full.html'"
-          class="bg-white text-[#1a1a2e] px-6 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors whitespace-nowrap shrink-0"
-        >
+        <button onclick="window.location.href='planning-navigation-full.html'"
+          class="bg-white text-[#1a1a2e] px-6 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition-colors whitespace-nowrap shrink-0">
           Start Now
         </button>
       </div>
@@ -329,4 +302,5 @@
     });
   </script>
 </body>
+
 </html>

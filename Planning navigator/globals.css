@@ -2378,10 +2378,28 @@ body {
   z-index: 1;
 }
 
+.img-macbook {
+
+  height: auto;
+  min-width: 850px !important;
+}
+
+
+
 /* ══════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════ */
 @media (max-width: 960px) {
+
+
+  .img-macbook {
+
+    height: auto;
+    min-width: 100% !important;
+  }
+
+
+
   .top-nav {
     padding: 0 16px;
     height: 50px;

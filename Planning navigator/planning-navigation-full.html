@@ -2346,20 +2346,20 @@
 
             const g = groups[currentGroupId];
             const isSpecialMulti = (currentGroupId === 'LG' || currentGroupId === 'SITE' || currentGroupId === 'PG' || currentGroupId === 'EXT' || currentGroupId === 'CONV' || currentGroupId === 'DEM');
-            
+
             let hasAnswer = false;
 
             if (isSpecialMulti) {
                 const isPhase1 = isInHardStopPhase(currentGroupId);
                 const groupPhase = groupPhaseState[currentGroupId];
-                
+
                 // If it's a fixed-screen multi-select (LG, SITE, PG P1, EXT P1)
                 const isNoneSelected = answers[currentGroupId + '_NONE'];
-                
+
                 // hardStops for Phase 1, nonHardStops for Phase 2 (Project type selection)
                 const relevantIds = isPhase1 ? groupPhase.hardStops : groupPhase.nonHardStops;
                 const someSelection = relevantIds && relevantIds.some(qid => answers[qid]);
-                
+
                 hasAnswer = isNoneSelected || someSelection;
             } else {
                 // Sequential/Standard question
@@ -2382,7 +2382,7 @@
             if (isStop) {
                 return '<span class="guidance-prompt">Press <strong>Continue</strong> to build your full summary with detailed next steps.</span>';
             }
-            return ""; 
+            return "";
         }
 
         function renderCalloutHTML(q, overrideIsStop = null) {
@@ -2397,7 +2397,7 @@
         function showInlineGuidance(questionId, text, isStop = false) {
             const wrapper = document.getElementById(`guidance-${questionId}`);
             if (!wrapper) return;
-            
+
             const flow = computeFlow();
             const isLastScreen = currentGroupId === flow[flow.length - 1];
             const prompt = getGuidancePrompt(isStop, isLastScreen);
@@ -3217,19 +3217,19 @@
                 d.setFontSize(16);
                 d.setTextColor(brandColor[0], brandColor[1], brandColor[2]);
                 d.text('Planning Navigator', margin, 20);
-                
+
                 // Generated Date
                 const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
                 d.setFont('helvetica', 'normal');
                 d.setFontSize(9);
                 d.setTextColor(mutedText[0], mutedText[1], mutedText[2]);
                 d.text(`Generated on ${dateStr}`, margin, 26);
-                
+
                 // Divider
                 d.setDrawColor(221, 228, 236);
                 d.setLineWidth(0.5);
                 d.line(margin, 30, 190, 30);
-                
+
                 if (isFirstPage) {
                     d.setFont('helvetica', 'bold');
                     d.setFontSize(14);
@@ -3245,11 +3245,11 @@
 
             // Answer Summary Grouping
             const allGroupIds = Object.keys(groups);
-            
+
             allGroupIds.forEach(gid => {
                 const g = groups[gid];
                 if (!g || !g.questionIds) return;
-                
+
                 // Find answers belonging to this group via questionIds array
                 const groupAnswers = Object.entries(answers).filter(([qid, ans]) => {
                     return g.questionIds.includes(qid) && questions[qid];
@@ -3260,16 +3260,16 @@
                 if (groupAnswers.length === 0 && !isNone) return;
 
                 const tableBody = [];
-                
+
                 if (isNone) {
                     tableBody.push([
-                        { 
-                            content: 'Selection', 
-                            styles: { fontStyle: 'bold', fontSize: 10, textColor: brandColor } 
+                        {
+                            content: 'Selection',
+                            styles: { fontStyle: 'bold', fontSize: 10, textColor: brandColor }
                         },
-                        { 
-                            content: 'None of these apply', 
-                            styles: { fontStyle: 'bold', halign: 'right', textColor: tealColor } 
+                        {
+                            content: 'None of these apply',
+                            styles: { fontStyle: 'bold', halign: 'right', textColor: tealColor }
                         }
                     ]);
                 } else {
@@ -3277,21 +3277,21 @@
                         const qData = questions[qid];
                         // Question + Guidance logic
                         tableBody.push([
-                            { 
-                                content: qData.question, 
-                                styles: { fontStyle: 'bold', fontSize: 10, textColor: brandColor } 
+                            {
+                                content: qData.question,
+                                styles: { fontStyle: 'bold', fontSize: 10, textColor: brandColor }
                             },
-                            { 
-                                content: ans.answer, 
-                                styles: { fontStyle: 'bold', halign: 'right', textColor: tealColor } 
+                            {
+                                content: ans.answer,
+                                styles: { fontStyle: 'bold', halign: 'right', textColor: tealColor }
                             }
                         ]);
                         if (qData.guidance) {
                             tableBody.push([
-                                { 
-                                    content: qData.guidance, 
+                                {
+                                    content: qData.guidance,
                                     styles: { fontSize: 9, textColor: mutedText, cellPadding: { top: 1, bottom: 3 } },
-                                    colSpan: 2 
+                                    colSpan: 2
                                 }
                             ]);
                         }
@@ -3310,9 +3310,9 @@
                     head: [[{ content: g.title, colSpan: 2 }]],
                     body: tableBody,
                     theme: 'plain',
-                    headStyles: { 
-                        fillColor: [244, 247, 250], 
-                        textColor: brandColor, 
+                    headStyles: {
+                        fillColor: [244, 247, 250],
+                        textColor: brandColor,
                         fontSize: 11,
                         fontStyle: 'bold',
                         cellPadding: { top: 3, bottom: 3, left: 4, right: 4 }
@@ -3328,7 +3328,7 @@
                         doc.text(`Page ${pageCount}`, 190, 285, { align: 'right' });
                     }
                 });
-                
+
                 startY = doc.lastAutoTable.finalY + 12;
             });
 
