@@ -1,0 +1,259 @@
+You are implementing a welcome page for the Planning Navigator tool.
+A reference design has been provided as a screenshot. Build it faithfully 
+as a single HTML file. The existing questionnaire lives at:
+https://tamkeen22.github.io/Planning-Navigator-New/
+Review the full source before starting — extract the exact font stack, 
+colour values, and any shared utilities so this page is consistent.
+
+---
+
+## Page structure (top to bottom, 6 sections)
+
+---
+
+### SECTION 1 — Full-bleed hero with aerial photo background
+
+Layout:
+- Full viewport-width panel, approximately 55–60vh tall.
+- Background: a full-bleed aerial/drone photograph of a UK residential 
+  neighbourhood (use a placeholder image or the one already in the codebase).
+- Dark overlay on the image: linear-gradient from rgba(0,0,0,0.55) at the 
+  bottom-left to transparent at the top-right, so text is legible.
+- Content is left-aligned, vertically centred or lower-third positioned.
+
+Content:
+- Small eyebrow link above the heading: "Planning Navigator" in the brand 
+  blue/teal colour with an underline, very small (12px).
+- H1: "Got an idea for your home or land?" — large, bold, white, 
+  approximately 42–48px, multi-line, max-width ~520px.
+- Body paragraph: white, 14–15px, max-width ~420px, below the heading.
+  Copy: "Whether it's an extension, loft conversion, annex, garage, 
+  outbuilding, or a change of use — answer a few simple questions to 
+  understand what may be possible for your project."
+- CTA button: solid brand blue, white text, rounded pill shape (~24px 
+  border-radius), label "Start or view your application", 
+  approximately 14px font. Positioned below the body paragraph with 
+  ~1.5rem margin-top.
+
+---
+
+### SECTION 2 — "What this check will help you do"
+
+Background: very light blue-grey (#EEF3FA or similar). Full width.
+Internal max-width container, centred, ~1100px.
+Padding: 3rem top and bottom.
+
+Top label: small uppercase text in brand blue, 11px, letter-spacing 0.08em.
+  Text: "Planning Portal"
+Section heading: H2, ~28px, font-weight 700, dark near-black.
+  Text: "What this check will help you do"
+
+Below the heading: a 2×2 card grid.
+
+Card style:
+- White background, subtle border (1px, light grey), border-radius ~12px.
+- Each card: horizontal layout — image thumbnail on the LEFT (~120×90px, 
+  object-fit cover, border-radius 8px), text content on the RIGHT.
+- Image: use a real photograph of UK residential housing/streets 
+  (same photo can repeat across cards as a placeholder).
+- Card heading: H3, ~14px, font-weight 700, dark colour.
+- Card body: 13px, muted grey, line-height 1.6, max 2–3 lines.
+- No icons — the thumbnail image IS the visual element.
+
+Card content (4 cards):
+  1. "Check property & location restrictions"
+     "Listed buildings, conservation areas, protected land, and local 
+     rules may limit what's permitted."
+
+  2. "Identify your project type"
+     "We'll narrow down whether you're planning an extension, conversion, 
+     garage, porch, or outbuilding."
+
+  3. "Understand the specific limits"
+     "Height, size, storeys, roof changes, garden coverage, and boundary 
+     distances — we'll check what matters."
+
+  4. "Spot wider site issues"
+     "Flood risk, highways, trees, ecology, contamination, and archaeology 
+     can all affect whether work can go ahead."
+
+---
+
+### SECTION 3 — "By the end, you'll understand whether your project"
+
+Layout: full-bleed, two-column split. Left ~45%, right ~55%.
+Background: strong brand blue gradient 
+  (left: deep blue ~#1A3FAA, right: slightly lighter ~#2E5FD9, 
+  or match the exact blue from the existing tool).
+Padding: 4rem top and bottom.
+
+LEFT COLUMN (white text, vertically centred):
+- H2: "By the end, you'll understand whether your project"
+  ~32px, font-weight 700, white, line-height 1.3, max-width ~340px.
+- Below: 4 bullet-point items, each with a circular blue-tinted tick icon 
+  on the left and white text on the right, 14px, line-height 1.6.
+  Items:
+    • "Is likely permitted development"
+    • "May need planning permission"
+    • "Needs Building Control approval"
+    • "Would benefit from professional advice"
+  Tick icon: small filled circle with white checkmark, ~18px diameter, 
+  slightly lighter blue than the background.
+
+RIGHT COLUMN:
+- A UI mockup / screenshot of the Interactive House tool, shown as a 
+  floating browser-chrome card (white rounded rectangle with a subtle 
+  shadow, ~500px wide).
+- Inside the card: the Interactive House interface — an isometric 3D 
+  house illustration on the right, a sidebar navigation list on the left 
+  showing room/feature categories.
+- The card appears to "float" slightly off the blue background — 
+  use a box-shadow: 0 24px 48px rgba(0,0,0,0.3).
+- The card bleeds slightly above and below the section boundaries 
+  (negative top and bottom margin ~-2rem) to create depth.
+- Use a placeholder image (img tag with src="#") if the actual screenshot 
+  is not available, with a comment: <!-- TODO: replace with Interactive 
+  House screenshot -->.
+
+---
+
+### SECTION 4 — "Interactive House" feature callout
+
+Layout: two-column, left ~45% right ~55%, reversed from section 3.
+Background: white. Padding: 4rem top and bottom.
+Max-width container ~1100px centred.
+
+LEFT COLUMN:
+- A second mockup of the Interactive House UI, similar browser-chrome 
+  card style as section 3 but now on the LEFT.
+- Shows the isometric house illustration with navigation tabs at top: 
+  "Explore house | Mini Guides | Smart Search Beta"
+- Same floating card treatment with box-shadow.
+
+RIGHT COLUMN (text, vertically centred):
+- Small eyebrow label: "Still exploring ideas?" — 11px, uppercase, 
+  letter-spacing 0.08em, brand blue.
+- H2: "Interactive House" — ~32px, font-weight 700, dark near-black.
+- Body copy (14px, muted, line-height 1.7):
+  "The Interactive House is a great place to start. It gives you a simple 
+  visual way to explore common home improvement projects before using this 
+  more detailed check."
+- CTA button below the body: brand blue, solid, pill-shaped (~24px radius), 
+  white text, label "Visit Interactive House →", ~14px.
+  href="https://interactive.planningportal.co.uk"
+
+---
+
+### SECTION 5 — "Before you start"
+
+Layout: two-column, left ~45% right ~55%.
+Background: light grey (#F5F5F5 or similar). Padding: 4rem top and bottom.
+Max-width container ~1100px centred.
+
+LEFT COLUMN:
+- A photograph: a person sitting at a desk reviewing architectural/planning 
+  drawings on a laptop. Use a placeholder img tag with 
+  <!-- TODO: replace with actual photo --> if not available.
+- Image fills the column, object-fit cover, border-radius 12px, 
+  aspect-ratio approximately 4:3.
+
+RIGHT COLUMN (text, vertically centred):
+- H2: "Before you start" — ~28px, font-weight 700, dark.
+- Subheading: "To get the best result, it helps to have:" — 14px, muted.
+- 3-item checklist (same tick-circle style as section 3 bullets):
+    • "A simple idea of what you want to build, change, or convert"
+    • "Rough measurements — height, width, depth, or distance to boundaries"
+    • "Useful site details — nearby trees, previous extensions, access, 
+      or anything unusual"
+- Tick icon: solid brand blue circle with white checkmark, ~20px.
+
+---
+
+### SECTION 6 — "Need help?" strip + sticky footer CTA
+
+NEED HELP STRIP:
+- White background, full width, thin grey top border.
+- Body text, 13px, muted grey:
+  "Don't worry if you have rough estimates — this tool is designed to help 
+  you explore what may be possible before committing to final plans."
+- Label above: "Need help?" — 14px, font-weight 600, dark.
+- Padding: 1.5rem top and bottom. Max-width container centred.
+
+STICKY FOOTER BAR:
+- Fixed to bottom of viewport. Full width. 
+- Background: dark navy/near-black (#1A1A2E or match the tool's dark colour).
+- Height ~60px. Two columns: left text, right button.
+- Left text (white, 13–14px, max-width ~600px):
+  "The questions are designed for homeowners, landowners, and anyone without 
+  planning experience, so you do not need to know technical terms or planning 
+  rules before you begin."
+- Right: solid white button with dark text, label "Start Now", 
+  ~36px height, border-radius 6px, font-weight 500.
+- "Start Now" triggers the same function as the hero CTA.
+- On mobile: stack text above button, full width button.
+
+---
+
+## Design system rules
+
+COLOURS (extract exact values from existing tool source — these are 
+approximate targets):
+  Primary blue:     ~#2952CC or #1A3FAA (hero background, buttons, ticks)
+  Dark navy:        ~#0D1B3E (footer bar, headings)
+  Background tint:  ~#EEF3FA (section 2 background)
+  White:            #FFFFFF
+  Muted text:       ~#666B7A
+  Border:           ~#DDE2EE
+
+TYPOGRAPHY:
+  - Font: match whatever is loaded in the existing tool (likely a sans-serif 
+    like Outfit, Inter, or a Planning Portal custom font).
+  - H1: 42–48px, weight 700, line-height 1.1
+  - H2: 28–32px, weight 700, line-height 1.3
+  - H3 (cards): 14px, weight 700
+  - Body: 13–15px, weight 400, line-height 1.7
+  - Labels/eyebrows: 11px, uppercase, letter-spacing 0.08em
+
+BUTTONS:
+  Pill primary: background brand-blue, white text, border-radius 24px, 
+    padding 10px 24px, font-size 14px, font-weight 500.
+  Square secondary: border 1.5px solid brand-blue, brand-blue text, 
+    background transparent, border-radius 6px.
+
+IMAGES:
+  - All img tags that need real photography: use 
+    src="https://placehold.co/[W]x[H]/E8EFF8/2952CC?text=Photo" 
+    as a placeholder until real assets are supplied.
+  - The Interactive House mockup cards: use 
+    src="https://placehold.co/500x320/1A3FAA/FFFFFF?text=Interactive+House" 
+    as placeholder.
+
+SPACING:
+  Section padding: 3–4rem top/bottom.
+  Container max-width: 1100px, margin: 0 auto, padding: 0 1.5rem.
+  Card gap: 1rem (2×2 grid).
+  Component internal gap: 1.5rem between heading and body.
+
+---
+
+## Responsiveness
+
+Breakpoints:
+  Mobile  < 640px:  All two-column layouts stack. Hero h1 drops to 28px. 
+                    Cards go 1-column. Sticky footer stacks vertically.
+  Tablet  640–1024px: Cards go 2-column. Two-column splits stay but shrink.
+  Desktop > 1024px: Full layout as described above.
+
+---
+
+## Technical constraints
+
+- Single HTML file, all CSS in a <style> block.
+- No new JS libraries. Minimal JS only for the sticky footer 
+  scroll-hide behaviour (hide when hero CTA is visible, show when scrolled past it).
+- "Start Now" and hero CTA both call the existing questionnaire 
+  initialisation function — identify it from the codebase and wire up.
+- All sections use semantic HTML: <section>, <h1>–<h3>, <ul>/<li> for 
+  checklists, <nav> if a top nav exists in the existing tool.
+- WCAG AA contrast on all text. Focus rings on all interactive elements.
+- No horizontal scroll at any viewport width.

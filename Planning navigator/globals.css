@@ -1245,33 +1245,46 @@ body {
   transform: scale(1);
 }
 
-/* None option */
+/* None option - Redesigned as a solid button (FIX 1) */
 .none-option {
-  margin: 3px 6px 6px;
-  padding: 11px 16px;
-  border: 1.5px dashed var(--border);
+  margin-top: 24px;
+  margin-bottom: 12px;
+  margin-left: 6px;
+  margin-right: 6px;
+  padding: 14px 24px;
+  background-color: #1F2937;
+  color: white;
+  border: none;
   border-radius: 10px;
   display: flex;
-  align-items: center;
+  align-items: left;
+  justify-content: left;
   gap: 9px;
   cursor: pointer;
-  color: var(--slate);
-  font-size: 12.5px;
-  font-weight: 500;
-  transition: all 0.18s;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.2s var(--ease-out-expo);
   user-select: none;
+  min-width: 280px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .none-option:hover {
-  border-color: var(--teal);
-  color: var(--teal);
-  background: #f0f8ff;
+  background-color: #374151;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.none-icon {
-  font-size: 14px;
-  opacity: 0.6;
+.none-option.selected {
+  background-color: #374151;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
 }
+
+.none-option:active {
+  transform: translateY(0px);
+}
+
 
 /* Callout */
 .callout {
@@ -1308,9 +1321,11 @@ body {
   background: #ecfdf5;
   border-color: #a7f3d0;
 }
+
 .callout--positive .callout-text {
   color: #065f46;
 }
+
 .callout--positive .callout-text strong {
   color: #064e3b;
 }
@@ -1320,9 +1335,11 @@ body {
   background: #eff6ff;
   border-color: #bfdbfe;
 }
+
 .callout--info .callout-text {
   color: #1e40af;
 }
+
 .callout--info .callout-text strong {
   color: #1e3a8a;
 }
@@ -1574,6 +1591,15 @@ body {
   color: #DC2626;
   font-weight: 500;
   flex: 1;
+}
+
+.guidance-prompt {
+  display: block;
+  margin-top: 8px;
+  color: #6B7280;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 13px;
 }
 
 /* ══════════════════════════════════════════════
@@ -1843,11 +1869,12 @@ body {
 }
 
 .btn-continue:disabled {
-  background: var(--border);
-  color: var(--slate);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+  background: #D1D5DB !important;
+  color: #9CA3AF !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
 }
 
 .btn-continue:disabled::before {

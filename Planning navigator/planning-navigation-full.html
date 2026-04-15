@@ -21,6 +21,8 @@
     <script defer src="components/questions/RadioQuestion.js"></script>
     <script defer src="components/questions/YesNoQuestion.js"></script>
     <script defer src="components/questions/AccordionQuestion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         /* Any page-specific overrides can go here */
         html {
@@ -137,7 +139,7 @@
                     { text: 'Yes', value: 'yes', next: ['PG4'] },
                     { text: 'No', value: 'no', next: ['PG4'] }
                 ],
-                guidance: 'Permitted Development may apply, some checks needed.'
+                guidance: 'Your project may be covered by permitted development rights, so full planning permission might not be needed. Continue answering a few more questions to confirm.'
             },
             'PG4': {
                 category: 'About Your Project',
@@ -147,7 +149,7 @@
                     { text: 'Yes', value: 'yes', next: ['PG5'] },
                     { text: 'No', value: 'no', next: ['PG5'] }
                 ],
-                guidance: 'Planning permission may be needed, check PD rules.'
+                guidance: 'Your project may require planning permission, depending on the changes. Continue answering a few more questions to understand what’s needed.'
             },
             'PG5': {
                 category: 'About Your Project',
@@ -157,7 +159,7 @@
                     { text: 'Yes', value: 'yes', next: ['T1'] },
                     { text: 'No', value: 'no', next: ['T1'] }
                 ],
-                guidance: 'Planning permission may be required; check building control.'
+                guidance: 'Your project may need planning permission and building control approval to meet safety standards. Continue answering a few more questions for a clearer overview.'
             },
             // Extensions & Additions
             'PT1': {
@@ -351,7 +353,7 @@
                     { text: 'Yes', value: 'yes', next: ['T2'], continueFlow: true },
                     { text: 'No', value: 'no', next: ['T2'], continueFlow: true }
                 ],
-                guidance: 'If your site is in a flood risk area, a Flood Risk Assessment may be required. Building Control requirements may change.'
+                guidance: 'This check applies whether or not your project falls under Permitted Development. If your site is in a flood risk area, a Flood Risk Assessment may be required alongside any planning application or Building Regulations approval.'
             },
             'T2': {
                 category: 'Site Checks & Considerations',
@@ -361,7 +363,7 @@
                     { text: 'Yes', value: 'yes', next: ['T3'], continueFlow: true },
                     { text: 'No', value: 'no', next: ['T3'], continueFlow: true }
                 ],
-                guidance: 'If your project affects access, parking, or visibility, a transport assessment or highways approval may be required.'
+                guidance: 'This check applies regardless of your planning route. If your project affects highway access, parking arrangements, or sightlines, a transport assessment or separate highways approval may be needed even for works that are otherwise permitted.'
             },
             'T3': {
                 category: 'Site Checks & Considerations',
@@ -371,7 +373,7 @@
                     { text: 'Yes', value: 'yes', next: ['T4'], continueFlow: true },
                     { text: 'No', value: 'no', next: ['T4'], continueFlow: true }
                 ],
-                guidance: 'If your site may be contaminated, a site investigation or remediation may be required to make it safe.'
+                guidance: 'This check applies to whatever planning route your project takes. If your site has a history of industrial use or other potential contamination, a site investigation and possibly a remediation strategy may be required before work can begin.'
             },
             'T4': {
                 category: 'Site Checks & Considerations',
@@ -381,7 +383,8 @@
                     { text: 'Yes', value: 'yes', next: ['T5'], continueFlow: true },
                     { text: 'No', value: 'no', next: ['T5'], continueFlow: true }
                 ],
-                guidance: 'If your project affects habitats, protected species, or trees, an ecological survey or arboricultural assessment may be required.'
+                guidance: 'This check applies regardless of your planning route. If your project affects highway access, parking arrangements, or sightlines, a transport assessment or separate highways approval may be needed even for works that are otherwise permitted.'
+
             },
             'T5': {
                 category: 'Site Checks & Considerations',
@@ -391,7 +394,7 @@
                     { text: 'Yes', value: 'yes', next: [], continueFlow: false },
                     { text: 'No', value: 'no', next: [], continueFlow: false }
                 ],
-                guidance: 'If your site is in an area of archaeological interest, a desk-based or on-site archaeological assessment may be required.'
+                guidance: 'This check applies regardless of whether planning permission is needed. If your site is in an area of known archaeological interest, a desk-based assessment or on-site evaluation may be required before or during development.'
             },
             // Loft Extension – PS1
             'PS1-01': {
@@ -1422,9 +1425,7 @@
                 const pageSub = groupId === 'LG'
                     ? 'Select everything that applies to your property — if nothing applies, just continue.'
                     : 'Select all that apply to your site — if none apply, just continue.';
-                const noneOptionText = groupId === 'LG'
-                    ? 'None of these apply to my property — skip this section'
-                    : 'None of these apply to my site — skip this section';
+                const noneOptionText = "None of these apply — skip to next section →";
 
                 container.innerHTML = `
                     <div class="question-section">
@@ -1461,12 +1462,11 @@
                                         guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                         ${isSelected ? 'selected' : ''}
                                     ></option-row>
-                                    ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                    ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}">${renderCalloutHTML(q)}</div>` : ''}
                                 `;
                 }).join('')}
                             </div>
                             <div class="none-option" id="noneOption">
-                                <span class="none-icon">⊘</span>
                                 ${noneOptionText}
                             </div>
                         </div>
@@ -1480,61 +1480,59 @@
                     if (!q) return;
                     const row = e.target;
 
+                    if (selected) {
+                        const noneBtn = container.querySelector('#noneOption');
+                        if (noneBtn) {
+                            noneBtn.classList.remove('selected');
+                            delete answers[currentGroupId + '_NONE'];
+                        }
+                    }
+
                     if (!selected) {
-                        // Deselected
                         delete answers[qid];
-                        // Remove callout
                         const calloutEl = row.nextElementSibling;
                         if (calloutEl && calloutEl.classList.contains('callout')) calloutEl.remove();
                     } else {
-                        // Selected
                         const yesOption = q.options.find(o => o.value === 'yes');
-                        answers[qid] = {
-                            question: q.question,
-                            answer: yesOption ? yesOption.text : 'Yes',
-                            value: 'yes'
-                        };
-
-                        // Show callout if guidance exists
+                        answers[qid] = { question: q.question, answer: yesOption ? yesOption.text : 'Yes', value: 'yes' };
                         if (q.guidance) {
                             let calloutEl = row.nextElementSibling;
                             if (!calloutEl || !calloutEl.classList.contains('callout')) {
                                 calloutEl = document.createElement('div');
-                                calloutEl.className = 'callout';
-                                calloutEl.innerHTML = `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.className = 'callout ' + getCalloutClass(q);
+                                calloutEl.innerHTML = renderCalloutHTML(q);
                                 row.parentNode.insertBefore(calloutEl, row.nextSibling);
                             }
                         }
-
-                        // Check if this triggers a stop (only for LG group)
-                        if (groupId === 'LG' && yesOption && yesOption.stop) {
-                            stopState = {
-                                result: yesOption.result,
-                                guidance: yesOption.guidance || q.guidance,
-                                fromQuestion: qid
-                            };
+                        if (currentGroupId === 'LG' && yesOption && yesOption.stop) {
+                            stopState = { result: yesOption.result, guidance: yesOption.guidance || q.guidance, fromQuestion: qid };
                         }
                     }
-
                     updateContinueState();
                 });
 
-                // None option handler
                 const noneBtn = container.querySelector('#noneOption');
                 if (noneBtn) {
+                    if (answers[currentGroupId + '_NONE']) noneBtn.classList.add('selected');
                     noneBtn.addEventListener('click', function () {
-                        // Deselect all option-row elements
-                        container.querySelectorAll('option-row[selected]').forEach(el => {
-                            el.selected = false;
-                            const qId = el.getAttribute('qid');
-                            delete answers[qId];
-                        });
-                        // Remove all callouts
-                        container.querySelectorAll('.callout').forEach(c => c.remove());
-                        updateContinueState();
-                        // Auto-advance
-                        document.getElementById('nextBtn').disabled = false;
-                        document.getElementById('nextBtn').click();
+                        if (!this.classList.contains('selected')) {
+                            this.classList.add('selected');
+                            answers[currentGroupId + '_NONE'] = true;
+                            container.querySelectorAll('option-row[selected]').forEach(el => {
+                                el.selected = false;
+                                delete answers[el.getAttribute('qid')];
+                            });
+                            container.querySelectorAll('.callout').forEach(c => c.remove());
+                            updateContinueState();
+                            setTimeout(() => {
+                                const nextBtn = document.getElementById('nextBtn');
+                                if (nextBtn && !nextBtn.disabled) nextBtn.click();
+                            }, 400);
+                        } else {
+                            this.classList.remove('selected');
+                            delete answers[currentGroupId + '_NONE'];
+                            updateContinueState();
+                        }
                     });
                 }
 
@@ -1619,7 +1617,7 @@
                                                 guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                                 ${isSelected ? 'selected' : ''}
                                             ></option-row>
-                                            ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                            ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}">${renderCalloutHTML(q)}</div>` : ''}
                                         `;
                     } else {
                         // Phase 2: Accordion rows for project types, or Standard rows if no sub-questions
@@ -1643,7 +1641,7 @@
                                                             guidance="${(psQ.guidance || '').replace(/"/g, '&quot;')}"
                                                             ${psAnsValue === 'yes' ? 'selected' : ''}
                                                         ></option-row>
-                                                        ${psAnsValue === 'yes' && psQ.guidance ? `<div class="callout ${getCalloutClass(psQ)}"><span class="callout-icon">${getCalloutIcon(psQ)}</span><div class="callout-text">${psQ.guidance}</div></div>` : ''}
+                                                        ${psAnsValue === 'yes' && psQ.guidance ? `<div class="callout ${getCalloutClass(psQ)}">${renderCalloutHTML(psQ)}</div>` : ''}
                                                     `;
                                 }).join('');
                             }
@@ -1661,7 +1659,7 @@
                                                 >
                                                     ${subQuestionsHtml}
                                                 </accordion-question>
-                                                ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                                ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}">${renderCalloutHTML(q)}</div>` : ''}
                                             `;
                         } else {
                             return `
@@ -1674,15 +1672,14 @@
                                                     guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                                     ${isSelected ? 'selected' : ''}
                                                 ></option-row>
-                                                ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                                ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}">${renderCalloutHTML(q)}</div>` : ''}
                                             `;
                         }
                     }
                 }).join('')}
                             </div>
                             <div class="none-option" id="noneOption">
-                                <span class="none-icon">⊘</span>
-                                ${isPhase1 ? 'None of these apply to my project' : 'None of these apply to my project'}
+                                None of these apply — skip to next section →
                             </div>
                         </div>
                     </div>
@@ -1693,6 +1690,14 @@
                     const { qid, selected } = e.detail;
                     const q = questions[qid];
                     if (!q) return;
+
+                    if (selected) {
+                        const noneBtn = container.querySelector('#noneOption');
+                        if (noneBtn) {
+                            noneBtn.classList.remove('selected');
+                            delete answers[currentGroupId + '_NONE'];
+                        }
+                    }
 
                     if (!selected) {
                         delete answers[qid];
@@ -1709,7 +1714,7 @@
                             if (!calloutEl || !calloutEl.classList.contains('callout')) {
                                 calloutEl = document.createElement('div');
                                 calloutEl.className = 'callout';
-                                calloutEl.innerHTML = `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.innerHTML = renderCalloutHTML(q);
                                 calloutEl.className = 'callout ' + getCalloutClass(q);
                                 e.target.parentNode.insertBefore(calloutEl, e.target.nextSibling);
                             }
@@ -1777,20 +1782,27 @@
                 // None option handler
                 const noneBtn = container.querySelector('#noneOption');
                 if (noneBtn) {
+                    if (answers[currentGroupId + '_NONE']) noneBtn.classList.add('selected');
                     noneBtn.addEventListener('click', function () {
-                        container.querySelectorAll('option-row[selected], accordion-question[selected]').forEach(el => {
-                            if (el.tagName.toLowerCase() === 'accordion-question') {
-                                el.querySelector('.accordion-header').click(); // Untoggle via click to trigger event properly
-                            } else {
+                        if (!this.classList.contains('selected')) {
+                            this.classList.add('selected');
+                            answers[currentGroupId + '_NONE'] = true;
+                            container.querySelectorAll('option-row[selected], accordion-question[selected]').forEach(el => {
                                 el.removeAttribute('selected');
                                 const qId = el.getAttribute('qid');
                                 delete answers[qId];
-                            }
-                        });
-                        container.querySelectorAll('.callout').forEach(c => c.remove());
-                        updateContinueState();
-                        document.getElementById('nextBtn').disabled = false;
-                        document.getElementById('nextBtn').click();
+                            });
+                            container.querySelectorAll('.callout').forEach(c => c.remove());
+                            updateContinueState();
+                            setTimeout(() => {
+                                const nextBtn = document.getElementById('nextBtn');
+                                if (nextBtn && !nextBtn.disabled) nextBtn.click();
+                            }, 400);
+                        } else {
+                            this.classList.remove('selected');
+                            delete answers[currentGroupId + '_NONE'];
+                            updateContinueState();
+                        }
                     });
                 }
 
@@ -1854,13 +1866,12 @@
                                         guidance="${(q.guidance || '').replace(/"/g, '&quot;')}"
                                         ${isSelected ? 'selected' : ''}
                                     ></option-row>
-                                    ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}"><span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div></div>` : ''}
+                                    ${isSelected && q.guidance ? `<div class="callout ${getCalloutClass(q)}">${renderCalloutHTML(q)}</div>` : ''}
                                 `;
                 }).join('')}
                             </div>
                             <div class="none-option" id="noneOption">
-                                <span class="none-icon">⊘</span>
-                                ${isPhase1 ? 'Neither of these apply — continue' : 'None of these apply to my project'}
+                                None of these apply — skip to next section →
                             </div>
                         </div>
                     </div>
@@ -1872,6 +1883,14 @@
                     const q = questions[qid];
                     if (!q) return;
                     const row = e.target;
+
+                    if (selected) {
+                        const noneBtn = container.querySelector('#noneOption');
+                        if (noneBtn) {
+                            noneBtn.classList.remove('selected');
+                            delete answers[currentGroupId + '_NONE'];
+                        }
+                    }
 
                     if (!selected) {
                         // Deselected
@@ -1897,7 +1916,7 @@
                             if (!calloutEl || !calloutEl.classList.contains('callout')) {
                                 calloutEl = document.createElement('div');
                                 calloutEl.className = 'callout';
-                                calloutEl.innerHTML = `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance}</div>`;
+                                calloutEl.innerHTML = renderCalloutHTML(q);
                                 calloutEl.className = 'callout ' + getCalloutClass(q);
                                 row.parentNode.insertBefore(calloutEl, row.nextSibling);
                             }
@@ -1916,22 +1935,29 @@
                     updateContinueState();
                 });
 
-                // None option handler
                 const noneBtn = container.querySelector('#noneOption');
                 if (noneBtn) {
+                    if (answers[currentGroupId + '_NONE']) noneBtn.classList.add('selected');
                     noneBtn.addEventListener('click', function () {
-                        // Deselect all option-row elements
-                        container.querySelectorAll('option-row[selected]').forEach(el => {
-                            el.selected = false;
-                            const qId = el.getAttribute('qid');
-                            delete answers[qId];
-                        });
-                        // Remove all callouts
-                        container.querySelectorAll('.callout').forEach(c => c.remove());
-                        updateContinueState();
-                        // Auto-advance
-                        document.getElementById('nextBtn').disabled = false;
-                        document.getElementById('nextBtn').click();
+                        if (!this.classList.contains('selected')) {
+                            this.classList.add('selected');
+                            answers[currentGroupId + '_NONE'] = true;
+                            container.querySelectorAll('option-row[selected]').forEach(el => {
+                                el.selected = false;
+                                const qId = el.getAttribute('qid');
+                                delete answers[qId];
+                            });
+                            container.querySelectorAll('.callout').forEach(c => c.remove());
+                            updateContinueState();
+                            setTimeout(() => {
+                                const nextBtn = document.getElementById('nextBtn');
+                                if (nextBtn && !nextBtn.disabled) nextBtn.click();
+                            }, 400);
+                        } else {
+                            this.classList.remove('selected');
+                            delete answers[currentGroupId + '_NONE'];
+                            updateContinueState();
+                        }
                     });
                 }
 
@@ -2315,68 +2341,72 @@
         }
 
         function updateContinueState() {
-            const g = groups[currentGroupId];
             const nextBtn = document.getElementById('nextBtn');
+            if (!nextBtn) return;
 
-            // Special handling for LG, SITE, PG, EXT, and CONV groups - always enable Continue button
-            // User can proceed even if nothing selected (moves to next group/phase)
-            // or if something selected (shows results with stop for LG, triggers flow for PG/EXT/CONV)
-            if (currentGroupId === 'LG' || currentGroupId === 'SITE' || currentGroupId === 'PG' || currentGroupId === 'EXT' || currentGroupId === 'CONV' || currentGroupId === 'DEM') {
-                nextBtn.disabled = false;
-                return;
+            const g = groups[currentGroupId];
+            const isSpecialMulti = (currentGroupId === 'LG' || currentGroupId === 'SITE' || currentGroupId === 'PG' || currentGroupId === 'EXT' || currentGroupId === 'CONV' || currentGroupId === 'DEM');
+            
+            let hasAnswer = false;
+
+            if (isSpecialMulti) {
+                const isPhase1 = isInHardStopPhase(currentGroupId);
+                const groupPhase = groupPhaseState[currentGroupId];
+                
+                // If it's a fixed-screen multi-select (LG, SITE, PG P1, EXT P1)
+                const isNoneSelected = answers[currentGroupId + '_NONE'];
+                
+                // hardStops for Phase 1, nonHardStops for Phase 2 (Project type selection)
+                const relevantIds = isPhase1 ? groupPhase.hardStops : groupPhase.nonHardStops;
+                const someSelection = relevantIds && relevantIds.some(qid => answers[qid]);
+                
+                hasAnswer = isNoneSelected || someSelection;
+            } else {
+                // Sequential/Standard question
+                const activeId = groupActiveQuestion[currentGroupId] || (g ? g.questionIds[0] : null);
+                if (activeId) {
+                    hasAnswer = !!answers[activeId];
+                    // Even if not in answers yet, if stopState is active for this question, it's a valid terminal answer
+                    if (stopState && stopState.fromQuestion === activeId) hasAnswer = true;
+                }
             }
 
-            // Handle hard-stop phase - always enable Continue button
-            // User can proceed even if nothing selected (moves to non-hard-stop phase)
-            // or if something selected (shows results with stop)
-            if (isInHardStopPhase(currentGroupId)) {
-                nextBtn.disabled = false;
-                return;
+            nextBtn.disabled = !hasAnswer;
+            nextBtn.setAttribute('aria-disabled', !hasAnswer);
+        }
+
+        function getGuidancePrompt(isStop, isLastScreen) {
+            if (isLastScreen && !isStop) {
+                return '<span class="guidance-prompt">Press <strong>Continue</strong> to generate your full results summary.</span>';
             }
-
-            // If there's a stop condition, enable Continue button
-            if (stopState) {
-                nextBtn.disabled = false;
-                return;
+            if (isStop) {
+                return '<span class="guidance-prompt">Press <strong>Continue</strong> to build your full summary with detailed next steps.</span>';
             }
+            return ""; 
+        }
 
-            const activeId = groupActiveQuestion[g.id] || g.questionIds[0];
-            const q = questions[activeId];
-            const ans = answers[activeId];
-
-            if (!ans) {
-                nextBtn.disabled = true;
-                return;
-            }
-
-            const opt = q.options.find(o => o.value === ans.value);
-
-            // Check if we need to move to next group
-            if (checkIfNeedsGroupChange(activeId, opt)) {
-                // Need to move to next group - enable Continue
-                nextBtn.disabled = false;
-                return;
-            }
-
-            // For questions with visual option cards (multiple options), always enable Continue
-            // User must click Continue to proceed
-            if (q.options && q.options.length > 2) {
-                nextBtn.disabled = false;
-                return;
-            }
-
-            // Within same group - disable Continue (auto-advance will happen)
-            nextBtn.disabled = true;
+        function renderCalloutHTML(q, overrideIsStop = null) {
+            const yesOption = q.options && q.options.find(o => o.value === 'yes');
+            const isStop = overrideIsStop !== null ? overrideIsStop : !!(yesOption && yesOption.stop);
+            const flow = computeFlow();
+            const isLastScreen = currentGroupId === flow[flow.length - 1];
+            const prompt = getGuidancePrompt(isStop, isLastScreen);
+            return `<span class="callout-icon">${getCalloutIcon(q)}</span><div class="callout-text">${q.guidance} ${prompt}</div>`;
         }
 
         function showInlineGuidance(questionId, text, isStop = false) {
             const wrapper = document.getElementById(`guidance-${questionId}`);
             if (!wrapper) return;
+            
+            const flow = computeFlow();
+            const isLastScreen = currentGroupId === flow[flow.length - 1];
+            const prompt = getGuidancePrompt(isStop, isLastScreen);
+
             const severityClass = isStop ? 'guidance-alert--stop' : '';
             wrapper.innerHTML = `
                 <div class="guidance-alert ${severityClass}">
                     <div class="guidance-icon">${isStop ? '⚠️' : 'ℹ️'}</div>
-                    <div class="guidance-text">${text}</div>
+                    <div class="guidance-text">${text} ${prompt}</div>
                 </div>
             `;
         }
@@ -3036,7 +3066,7 @@
                 ];
             } else if (anyStop) {
                 nextSteps = [
-                    { icon: '⚠️', title: 'Planning Permission Likely', desc: 'Your project has elements requiring planning permission. Speak with your Local Planning Authority early.', link: 'javascript:void(0)', linkText: 'Get Official Advice' },
+                    { icon: '⚠️', title: 'Planning Permission Likely Required', desc: 'Your project has elements requiring planning permission. Speak with your Local Planning Authority early.', link: 'javascript:void(0)', linkText: 'Get Official Advice' },
                     { icon: '✍️', title: 'Submit an LDC', desc: 'Play it safe and submit a Lawful Development Certificate via the Planning Portal.', link: 'javascript:void(0)', linkText: 'Visit Planning Portal' },
                     { icon: '📐', title: 'Professional Advice', desc: 'Seek professional planning advice to prepare the right information and drawings.', link: '', linkText: '' },
                     { icon: '🏗️', title: 'Building Control', desc: 'Building Control approval will still be required for most structural or habitable works.', link: '', linkText: '' }
@@ -3149,7 +3179,7 @@
 
                 <div class="result-footer">
                     <button class="btn-light" onclick="restart()">Start over</button>
-                    <button class="btn-secondary-ghost" onclick="window.print()">🖨 Print result</button>
+                    <button class="btn-secondary-ghost" onclick="downloadPDF()">📄 Download PDF Summary</button>
                     <button class="btn-secondary-ghost" onclick="copyResultToClipboard()">📋 Copy summary</button>
                 </div>
             `;
@@ -3168,6 +3198,171 @@
                 body.classList.add('collapsed');
                 header.classList.add('answer-summary-collapsed');
             }
+        }
+
+        // Generate a high-quality PDF summary using jsPDF and AutoTable
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const brandColor = [12, 31, 56]; // #0c1f38 (Navy)
+            const mutedText = [107, 114, 128]; // #6B7280
+            const bodyText = [50, 50, 50];
+            const tealColor = [13, 116, 144]; // #0d7490 (Teal)
+            const margin = 20;
+
+            // Header Helper
+            const addHeader = (d, isFirstPage = false) => {
+                // Wordmark/Logo
+                d.setFont('helvetica', 'bold');
+                d.setFontSize(16);
+                d.setTextColor(brandColor[0], brandColor[1], brandColor[2]);
+                d.text('Planning Navigator', margin, 20);
+                
+                // Generated Date
+                const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                d.setFont('helvetica', 'normal');
+                d.setFontSize(9);
+                d.setTextColor(mutedText[0], mutedText[1], mutedText[2]);
+                d.text(`Generated on ${dateStr}`, margin, 26);
+                
+                // Divider
+                d.setDrawColor(221, 228, 236);
+                d.setLineWidth(0.5);
+                d.line(margin, 30, 190, 30);
+                
+                if (isFirstPage) {
+                    d.setFont('helvetica', 'bold');
+                    d.setFontSize(14);
+                    d.setTextColor(brandColor[0], brandColor[1], brandColor[2]);
+                    d.text('Your Planning Assessment Summary', margin, 42);
+                }
+            };
+
+            addHeader(doc, true);
+
+            let startY = 48;
+            const summaryFlags = [];
+
+            // Answer Summary Grouping
+            const allGroupIds = Object.keys(groups);
+            
+            allGroupIds.forEach(gid => {
+                const g = groups[gid];
+                if (!g || !g.questionIds) return;
+                
+                // Find answers belonging to this group via questionIds array
+                const groupAnswers = Object.entries(answers).filter(([qid, ans]) => {
+                    return g.questionIds.includes(qid) && questions[qid];
+                });
+
+                const isNone = answers[gid + '_NONE'];
+
+                if (groupAnswers.length === 0 && !isNone) return;
+
+                const tableBody = [];
+                
+                if (isNone) {
+                    tableBody.push([
+                        { 
+                            content: 'Selection', 
+                            styles: { fontStyle: 'bold', fontSize: 10, textColor: brandColor } 
+                        },
+                        { 
+                            content: 'None of these apply', 
+                            styles: { fontStyle: 'bold', halign: 'right', textColor: tealColor } 
+                        }
+                    ]);
+                } else {
+                    groupAnswers.forEach(([qid, ans]) => {
+                        const qData = questions[qid];
+                        // Question + Guidance logic
+                        tableBody.push([
+                            { 
+                                content: qData.question, 
+                                styles: { fontStyle: 'bold', fontSize: 10, textColor: brandColor } 
+                            },
+                            { 
+                                content: ans.answer, 
+                                styles: { fontStyle: 'bold', halign: 'right', textColor: tealColor } 
+                            }
+                        ]);
+                        if (qData.guidance) {
+                            tableBody.push([
+                                { 
+                                    content: qData.guidance, 
+                                    styles: { fontSize: 9, textColor: mutedText, cellPadding: { top: 1, bottom: 3 } },
+                                    colSpan: 2 
+                                }
+                            ]);
+                        }
+                        // Accumulate Flags for final page
+                        if (ans.value === 'yes') {
+                            summaryFlags.push({
+                                title: qData.question.split('?')[0].split(',')[0],
+                                guidance: qData.guidance || 'Checks required.'
+                            });
+                        }
+                    });
+                }
+
+                doc.autoTable({
+                    startY: startY,
+                    head: [[{ content: g.title, colSpan: 2 }]],
+                    body: tableBody,
+                    theme: 'plain',
+                    headStyles: { 
+                        fillColor: [244, 247, 250], 
+                        textColor: brandColor, 
+                        fontSize: 11,
+                        fontStyle: 'bold',
+                        cellPadding: { top: 3, bottom: 3, left: 4, right: 4 }
+                    },
+                    margin: { horizontal: margin },
+                    didDrawPage: (data) => {
+                        // Footer on every page
+                        const pageCount = doc.internal.getNumberOfPages();
+                        doc.setFont('helvetica', 'italic');
+                        doc.setFontSize(8);
+                        doc.setTextColor(mutedText[0], mutedText[1], mutedText[2]);
+                        doc.text("This summary is for guidance only and does not constitute professional planning advice.", margin, 285);
+                        doc.text(`Page ${pageCount}`, 190, 285, { align: 'right' });
+                    }
+                });
+                
+                startY = doc.lastAutoTable.finalY + 12;
+            });
+
+            // "Actions You May Need to Take" Final Page
+            if (summaryFlags.length > 0) {
+                doc.addPage();
+                addHeader(doc);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.setTextColor(brandColor[0], brandColor[1], brandColor[2]);
+                doc.text('Actions You May Need to Take', margin, 42);
+
+                const flagRows = summaryFlags.map(f => [
+                    { content: f.title, styles: { fontStyle: 'bold', textColor: [190, 33, 33] } },
+                    { content: f.guidance, styles: { textColor: bodyText } }
+                ]);
+
+                doc.autoTable({
+                    startY: 48,
+                    head: [['Requirement', 'Guidance & Next Steps']],
+                    body: flagRows,
+                    theme: 'grid',
+                    headStyles: { fillColor: brandColor, textColor: [255, 255, 255], fontStyle: 'bold' },
+                    columnStyles: {
+                        0: { cellWidth: 45 },
+                        1: { cellWidth: 'auto' }
+                    },
+                    styles: { fontSize: 9, cellPadding: 4, lineHeight: 1.4 },
+                    margin: { horizontal: margin }
+                });
+            }
+
+            const fileName = `Planning-Summary-${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
         }
 
         function copyResultToClipboard() {
@@ -3201,7 +3396,7 @@
         document.addEventListener('DOMContentLoaded', function () { init(); });
     </script>
 
-    <!-- Footer - Duolingo Style -->
+    <!-- Footer Style -->
     <footer
         style="background: #F7F7F7; color: #4B4B4B; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100; border-top: 1px solid #E5E5E5;">
         <div
