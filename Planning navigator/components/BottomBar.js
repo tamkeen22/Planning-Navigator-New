@@ -16,13 +16,17 @@
       this.innerHTML = `
         <div class="sticky-footer">
           <div class="sticky-footer-left" id="stepHint">
-            <span class="footer-counter">Question <span id="questionIndex">1</span> of <span id="questionTotal">1</span></span>
-            <div class="pip-row" id="pipRow"></div>
+            <span class="footer-counter" style="letter-spacing: 0.1px;">Question <span id="questionIndex">1</span> of <span id="questionTotal">1</span></span>
+            <div class="pip-row" id="pipRow" style="margin-left: 8px;"></div>
           </div>
           <div class="sticky-footer-actions">
-            <button class="btn-back" id="backBtn">← Back</button>
+            <button class="btn-back" id="backBtn">
+              <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+              Back
+            </button>
             <button class="btn-continue" id="nextBtn" disabled>
-              <span>Continue</span> <span class="arr">→</span>
+              <span>Continue</span>
+              <i data-lucide="arrow-right" color="white" style="width: 18px; height: 18px; position: relative; "></i>
             </button>
           </div>
         </div>

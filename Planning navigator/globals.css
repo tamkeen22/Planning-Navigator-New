@@ -433,17 +433,18 @@ body {
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
+  box-shadow: 0 20px 50px rgba(12, 31, 56, 0.05);
 }
 
 .sc-head {
-  padding: 9px 14px;
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.9px;
+  padding: 12px 16px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--slate);
-  background: var(--slate-light);
-  border-bottom: 1px solid var(--border);
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .sc-step {
@@ -467,9 +468,9 @@ body {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 2.5px;
+  width: 4px;
   background: var(--teal);
-  border-radius: 0 2px 2px 0;
+  border-radius: 0 4px 4px 0;
 }
 
 .scd {
@@ -519,11 +520,12 @@ body {
 
 /* Sidebar help card */
 .sidebar-help {
-  background: linear-gradient(150deg, var(--navy) 0%, #1c3d60 100%);
+  background: linear-gradient(150deg, #0c1f38 0%, #162d4a 100%);
   border-radius: 14px;
-  padding: 15px 14px;
+  padding: 32px 24px;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-help h4 {
@@ -662,16 +664,16 @@ body {
 
 .question-card {
   background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 40px 48px;
-  margin-bottom: 24px;
-  max-width: 700px;
+  border: 1px solid #e5eaf2;
+  border-radius: 14px;
+  padding: 56px 64px;
+  margin-bottom: 32px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  transition: all 0.3s var(--ease-out-expo);
-  box-shadow: 0 1px 4px rgba(12, 31, 56, 0.05);
+  transition: all 0.4s var(--ease-out-expo);
+  box-shadow: 0 30px 60px rgba(12, 31, 56, 0.08);
   overflow: hidden;
 }
 
@@ -747,14 +749,14 @@ body {
 
 /* Question text */
 .question-text {
-  font-size: 28px;
-  line-height: 1.4;
+  font-size: 36px;
+  line-height: 1.25;
   max-width: 100%;
-  color: var(--navy);
-  font-weight: 700;
-  margin-bottom: 40px;
-  text-align: center;
-  letter-spacing: -0.5px;
+  color: #000;
+  font-weight: 800;
+  margin-bottom: 48px;
+  text-align: left;
+  letter-spacing: -0.6px;
 }
 
 .question-row {
@@ -989,10 +991,10 @@ body {
 /* Question Block wrapper */
 .q-block {
   background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: 1px solid #e5eaf2;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(12, 31, 56, 0.05);
+  box-shadow: 0 30px 60px rgba(12, 31, 56, 0.08);
 }
 
 .q-header {
@@ -1019,15 +1021,15 @@ body {
 }
 
 .q-badge {
-  background: #e8f7fb;
+
   color: var(--teal);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 4px 11px;
-  border-radius: 99px;
+  padding: 11px 0px;
+
   white-space: nowrap;
   letter-spacing: 0.2px;
-  border: 1px solid #c0e8f2;
+
 }
 
 .options-list {
@@ -1252,13 +1254,13 @@ body {
   margin-left: 6px;
   margin-right: 6px;
   padding: 14px 24px;
-  background-color: #1F2937;
+  background-color: #1B76D8;
   color: white;
   border: none;
   border-radius: 10px;
   display: flex;
-  align-items: left;
-  justify-content: left;
+  align-items: right;
+  justify-content: center;
   gap: 9px;
   cursor: pointer;
   font-size: 13.5px;
@@ -1292,11 +1294,12 @@ body {
   gap: 11px;
   background: #fffbeb;
   border: 1px solid #fde68a;
-  border-radius: 10px;
-  padding: 13px 16px;
-  margin-top: 12px;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   align-items: flex-start;
-  animation: calloutIn 0.3s var(--ease-out-expo) both;
+  animation: calloutIn 0.1s ease-out !important;
 }
 
 .callout-icon {
@@ -1306,7 +1309,7 @@ body {
 }
 
 .callout-text {
-  font-size: 12.5px;
+  font-size: 14px;
   color: #78350f;
   line-height: 1.55;
 }
@@ -1524,10 +1527,10 @@ body {
    ══════════════════════════════════════════════ */
 .guidance-alert {
   margin-top: 24px;
-  border-radius: 10px;
+  border-radius: 24px;
   border: 1px solid #BFDBFE;
   background: #EFF6FF;
-  padding: 13px 16px;
+  padding: 20px 24px;
   font-size: 14px;
   display: flex;
   gap: 11px;
@@ -1733,16 +1736,16 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid var(--border);
-  padding: 13px 44px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid #e5eaf2;
+  padding: 24px 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   z-index: 200;
-  box-shadow: 0 -4px 24px rgba(12, 31, 56, 0.08);
+  box-shadow: 0 -10px 40px rgba(12, 31, 56, 0.08);
 }
 
 .sticky-footer-left {
@@ -1791,18 +1794,18 @@ body {
 /* Back button */
 .btn-back {
   background: var(--white);
-  border: 1.5px solid var(--border);
+  border: 1.5px solid #e5eaf2;
   color: var(--text);
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
-  transition: all 0.18s;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  gap: 8px;
+  transition: all 0.22s var(--ease-out-expo);
+  font-family: inherit;
 }
 
 .btn-back:hover {
@@ -1813,29 +1816,30 @@ body {
 
 /* Continue button */
 .btn-continue {
-  background: var(--navy);
+  background: #1b76d8;
   color: #fff;
   border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 12px 32px;
+  border-radius: 99px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 7px;
-  transition: all 0.22s var(--ease-out-expo);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  gap: 10px;
+  transition: all 0.3s var(--ease-out-expo);
+  font-family: inherit;
   letter-spacing: -0.1px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 10px 25px rgba(27, 118, 216, 0.25);
 }
 
 .btn-continue::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--teal), #0ea5c9);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.22s;
 }
@@ -1910,12 +1914,12 @@ body {
 }
 
 .result-title {
-  font-family: 'Lora', serif;
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 16px;
+  font-family: inherit;
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 20px;
   color: var(--navy);
-  letter-spacing: -0.8px;
+  letter-spacing: -1.2px;
 }
 
 .result-subtitle {
@@ -1925,14 +1929,14 @@ body {
 }
 
 .result-card {
-  border-radius: 16px;
-  border: 1px solid var(--border);
+  border-radius: 18px;
+  border: 1px solid #e5eaf2;
   background: var(--white);
-  padding: 32px 40px;
-  margin-bottom: 24px;
-  transition: all 0.2s ease;
-  animation: fadeInUp 0.4s ease both;
-  box-shadow: 0 1px 4px rgba(12, 31, 56, 0.05);
+  padding: 48px;
+  margin-bottom: 32px;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease both;
+  box-shadow: 0 20px 50px rgba(12, 31, 56, 0.06);
 }
 
 .result-card:hover {
@@ -2194,7 +2198,7 @@ body {
   align-items: flex-start;
   gap: 16px;
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: 6px;
   background: var(--white);
   border: 1px solid var(--border);
   border-left: 4px solid var(--teal);
@@ -2229,19 +2233,19 @@ body {
 }
 
 .reason-question {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--navy);
 }
 
 .reason-answer {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--slate);
   font-weight: 500;
 }
 
 .reason-text {
-  font-size: 13px;
+  font-size: 14px;
   color: #b91c1c;
   line-height: 1.6;
 }
@@ -2379,12 +2383,63 @@ body {
 }
 
 .img-macbook {
-
-  height: auto;
-  min-width: 850px !important;
+  width: 200% !important;
+  height: 100%;
+  position: relative;
+  margin-right: -50% !important;
 }
 
+.before-you-start {
+  margin-top: -100% !important;
+}
 
+.img-macbook-ih {
+  width: 250%;
+  height: 100%;
+  position: relative;
+  margin-left: -100%;
+}
+
+.check-card {
+  padding: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 20px !important;
+
+}
+
+.check-card-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 11.5625rem !important;
+  height: 14.4375rem !important;
+
+}
+
+.card-title {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  color: var(--navy) !important;
+  margin-bottom: 8px !important;
+}
+
+.card-description {
+  font-size: 16px !important;
+  color: var(--slate) !important;
+  line-height: 1.6 !important;
+}
+
+.hero-gradient {
+  background: linear-gradient(45deg, #012a4b, #012a4b30) !important;
+
+}
+
+.sticky-text {
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
 
 /* ══════════════════════════════════════════════
    RESPONSIVE

@@ -1440,8 +1440,9 @@
                                 <div>
                                     <div class="q-label">Question <span id="qBlockIdx">1</span> of <span id="qBlockTotal">${g.questionIds.length}</span></div>
                                     <div class="q-title">${sectionTitle}</div>
+                                   <!-- <div class="q-badge">Select all options that apply</div> -->
                                 </div>
-                                <div class="q-badge">Select all that apply</div>
+                                
                             </div>
                             <div class="options-list">
                                 ${g.questionIds.map((qId, idx) => {
@@ -1466,8 +1467,10 @@
                                 `;
                 }).join('')}
                             </div>
-                            <div class="none-option" id="noneOption">
-                                ${noneOptionText}
+                            <div class="flex justify-end mt-6">
+                                <div class="none-option" id="noneOption" style="margin: 0; min-width: 240px;">
+                                    ${noneOptionText}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3062,14 +3065,14 @@
                     { icon: '↺', title: 'Restart Tool', desc: 'If you are planning specific works, select the relevant project types.', link: 'javascript:restart()', linkText: 'Start Assessment' },
                     { icon: '📞', title: 'Local Planning Authority', desc: 'For general planning advice, contact your Local Planning Authority.', link: '', linkText: '' },
                     { icon: '📘', title: 'Planning Guide', desc: 'Download your Beginners Guide to Planning.', link: 'javascript:void(0)', linkText: 'Download Guide' },
-                    { icon: '🕵️', title: 'Professional Advice', desc: 'Consider consulting with a qualified planning consultant for project-specific guidance.', link: '', linkText: '' }
+                    { icon: '🕵️', title: 'Professional Advice', desc: 'Consider consulting with a qualified planning consultant for project-specific guidance.', link: 'https://www.planningportal.co.uk/permission/planning-guidance-service', linkText: 'Get Professional Advice' }
                 ];
             } else if (anyStop) {
                 nextSteps = [
-                    { icon: '⚠️', title: 'Planning Permission Likely Required', desc: 'Your project has elements requiring planning permission. Speak with your Local Planning Authority early.', link: 'javascript:void(0)', linkText: 'Get Official Advice' },
-                    { icon: '✍️', title: 'Submit an LDC', desc: 'Play it safe and submit a Lawful Development Certificate via the Planning Portal.', link: 'javascript:void(0)', linkText: 'Visit Planning Portal' },
-                    { icon: '📐', title: 'Professional Advice', desc: 'Seek professional planning advice to prepare the right information and drawings.', link: '', linkText: '' },
-                    { icon: '🏗️', title: 'Building Control', desc: 'Building Control approval will still be required for most structural or habitable works.', link: '', linkText: '' }
+                    { icon: '⚠️', title: 'Planning Permission Likely Required', desc: 'Your project has elements requiring planning permission. Speak with your Local Planning Authority early.', link: 'https://www.planningportal.co.uk/planning/planning-applications', linkText: 'Apply for Planning Permission' },
+                    { icon: '✍️', title: 'Submit an LDC', desc: 'Play it safe and submit a Lawful Development Certificate via the Planning Portal.', link: 'https://www.planningportal.co.uk/', linkText: 'Visit Planning Portal' },
+                    { icon: '📐', title: 'Professional Advice', desc: 'Seek professional planning advice to prepare the right information and drawings.', link: 'https://www.planningportal.co.uk/permission/planning-guidance-service', linkText: 'Get Professional Advice' },
+                    { icon: '🏗️', title: 'Building Control', desc: 'Building Control approval will still be required for most structural or habitable works.', link: 'https://www.planningportal.co.uk/applications/building-control-applications/building-control', linkText: 'Get Building Control Approval' }
                 ];
             } else {
                 nextSteps = [
@@ -3124,63 +3127,73 @@
             const answerCount = answersWithGuidance.length;
 
             resultContainer.innerHTML = `
-                <div class="result-header">
-                    <div class="result-title">Your Planning Assessment</div>
-                    <div class="result-subtitle">Based on the information you provided</div>
+                <div class="result-header" style="margin-bottom: 48px;">
+                    <div class="result-title">Your Planning Summary</div>
+                    <div class="result-subtitle" style="font-size: 18px;">Based on your answers, here is our assessment of your project.</div>
                 </div>
 
                 ${!anyStop && !noProjectTypes ? `
-                <div class="result-success-header">
-                    <span class="result-success-icon">✅</span>
-                    <div style="font-size:18px;font-weight:700;color:#065F46;margin-bottom:8px;">No Blocking Issues Found</div>
-                    <div style="font-size:15px;color:#6B7280;">Your answers suggest Permitted Development may apply — see details below.</div>
+                <div class="result-success-header" style="background: #f0fdf4; border-radius: 24px; padding: 24px; margin-bottom: 32px; border: 1px solid #dcfce7; display: flex; align-items: center; gap: 16px;">
+                    <span style="font-size: 24px;">✅</span>
+                    <div>
+                        <div style="font-size:18px;font-weight:800;color:#065F46;margin-bottom:2px;">No Blocking Issues Found</div>
+                        <div style="font-size:15px;color:#166534;">Your answers suggest Permitted Development rights may apply.</div>
+                    </div>
                 </div>` : ''}
 
-                <div class="result-card ${anyStop ? 'outcome-stop' : (noProjectTypes ? '' : 'success')}">
-                    <h3>${anyStop ? '⛔ ' : (noProjectTypes ? '' : '🟢 ')}${heading}</h3>
-                    <p>${description}</p>
+                <div class="result-card ${anyStop ? 'outcome-stop' : (noProjectTypes ? '' : 'success')}" style="padding: 48px; border-radius: 40px;">
+                    <h3 style="font-family: inherit; font-size: 32px; font-weight: 800; margin-bottom: 24px;">
+                        ${heading}
+                    </h3>
+                    <p style="font-size: 18px; line-height: 1.8; color: #4a6278;">${description}</p>
                 </div>
 
                 ${reasonsHtml}
 
-                <div class="result-card">
-                    <h3>Next Steps</h3>
+                <div class="result-card" style="padding: 48px; border-radius: 40px;">
+                    <h3 style="font-family: inherit; font-size: 28px; font-weight: 800; margin-bottom: 32px;">Next Steps</h3>
                     <div class="action-cards-grid">
                         ${nextSteps.map(step => `
-                            <div class="action-card">
-                                <div class="action-card-header">
-                                    <div class="action-card-icon">${step.icon}</div>
-                                    <div class="action-card-title">${step.title}</div>
+                            <div class="action-card" style="border-radius: 20px; padding: 24px; border: 1px solid #e5eaf2; background: #fafbfc; transition: all 0.3s ease;">
+                                <div class="action-card-header" style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+                                    <div class="action-card-icon" style="font-size: 24px; background: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">${step.icon}</div>
+                                    <div class="action-card-title" style="font-size: 18px; font-weight: 800; color: #0c1f38;">${step.title}</div>
                                 </div>
-                                <div class="action-card-desc">${step.desc}</div>
-                                ${step.link ? `<a href="${step.link}" class="action-card-link" target="_blank">${step.linkText} <span style="font-size:10px;">↗</span></a>` : ''}
+                                <div class="action-card-desc" style="font-size: 15px; line-height: 1.6; color: #4a6278; margin-bottom: 20px;">${step.desc}</div>
+                                ${step.link ? `<a href="${step.link}" class="action-card-link" style="color: #1b76d8; font-weight: 700; text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 4px;">${step.linkText} <span style="font-size: 12px;">→</span></a>` : ''}
                             </div>
                         `).join('')}
                     </div>
                 </div>
 
-                <div class="result-secondary">
-                    <div class="answer-summary-header answer-summary-collapsed" id="answerSummaryHeader" onclick="toggleAnswerSummary()">
-                        <h3>Your Answer Summary</h3>
-                        <div class="answer-summary-meta">
-                            <span>${answerCount} answer${answerCount === 1 ? '' : 's'}</span>
+                <div class="result-secondary" style="margin-top: 40px;">
+                    <div class="answer-summary-header answer-summary-collapsed" id="answerSummaryHeader" onclick="toggleAnswerSummary()" style="background: white; border-radius: 20px; padding: 24px; border: 1px solid #e5eaf2; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-family: inherit; font-size: 20px; font-weight: 800; color: #0c1f38; margin: 0;">Detailed Answer Summary</h3>
+                        <div class="answer-summary-meta" style="display: flex; align-items: center; gap: 12px; color: #727272; font-weight: 600; font-size: 14px;">
+                            <span>${answerCount} questions answered</span>
                             <span class="answer-summary-chevron">▼</span>
                         </div>
                     </div>
-                <div class="answers-list answer-summary-body collapsed" id="answerSummaryBody">
-                    ${answersHtml}
-                </div>
+                    <div class="answers-list answer-summary-body collapsed" id="answerSummaryBody" style="margin-top: 12px; padding: 12px; background: white; border-radius: 20px; border: 1px solid #e5eaf2;">
+                        ${answersHtml}
+                    </div>
                 </div>
 
-                <div class="disclaimer">
-                    <strong>Important Disclaimer</strong><br>
+                <div class="disclaimer" style="margin-top: 48px; padding: 24px; background: #f8fafc; border-radius: 20px; font-size: 14px; color: #64748b; line-height: 1.6; border: 1px solid #e2e8f0;">
+                    <strong style="color: #475569; display: block; margin-bottom: 8px;">Disclaimer</strong>
                     ${disclaimerText}
                 </div>
 
-                <div class="result-footer">
-                    <button class="btn-light" onclick="restart()">Start over</button>
-                    <button class="btn-secondary-ghost" onclick="downloadPDF()">📄 Download PDF Summary</button>
-                    <button class="btn-secondary-ghost" onclick="copyResultToClipboard()">📋 Copy summary</button>
+                <div class="result-footer" style="margin-top: 48px; display: flex; gap: 16px; justify-content: center; align-items: center;">
+                    <button class="btn-back" onclick="restart()">Start over</button>
+                    <button class="btn-continue" onclick="downloadPDF()">
+                        <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+                        Download Summary
+                    </button>
+                    <button class="btn-back" style="border: none; background: transparent;" onclick="copyResultToClipboard()">
+                        <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                        Copy Text
+                    </button>
                 </div>
             `;
         }

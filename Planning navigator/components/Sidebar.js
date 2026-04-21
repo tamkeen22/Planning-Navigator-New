@@ -22,7 +22,7 @@
       this.innerHTML = `
         <aside class="sidebar">
           <div class="sidebar-card anim-1">
-            <div class="sc-head">YOUR JOURNEY</div>
+            <div class="sc-head">YOUR PROGRESS</div>
             ${STEPS.map((s, i) => `
               <div class="sc-step${i === 0 ? ' active' : ''}" id="${s.id}">
                 <div class="scd">${i + 1}</div>
@@ -34,9 +34,9 @@
             `).join('')}
           </div>
           <div class="sidebar-help anim-1">
-            <h4>Not sure about any of these?</h4>
-            <p>Use our interactive house tool to explore what constraints might apply to your property.</p>
-            <a class="sh-btn" href="javascript:void(0)">Open Interactive House Tool →</a>
+            <h4 style="font-size: 14px; margin-bottom: 8px;">Need more help?</h4>
+            <p style="font-size: 13px; margin-bottom: 16px;">Our Interactive House tool is a visual way to see what's possible.</p>
+            <a class="sh-btn" href="javascript:void(0)" style="padding: 12px; border-radius: 12px; font-size: 13px;">Visit Interactive House →</a>
           </div>
         </aside>
       `;
