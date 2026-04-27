@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning Navigator – v5</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #0c1f38;
+    --navy-mid:    #162d4a;
+    --teal:        #0d7490;
+    --teal-dim:    #0a5c73;
+    --teal-glow:   rgba(13,116,144,0.18);
+    --green:       #047857;
+    --green-mid:   #059669;
+    --green-glow:  rgba(4,120,87,0.16);
+    --green-bg:    #ecfdf5;
+    --green-border:#6ee7b7;
+    --slate:       #5e7287;
+    --slate-light: #f4f7fa;
+    --border:      #dde4ec;
+    --border-soft: #eaf0f6;
+    --white:       #ffffff;
+    --text:        #0c1f38;
+    --text-soft:   #4a6278;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #eef2f7;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PAGE ENTRY ANIMATION ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .anim-1 { animation: fadeUp 0.5s var(--ease-out-expo) 0.05s both; }
+  .anim-2 { animation: fadeUp 0.5s var(--ease-out-expo) 0.12s both; }
+  .anim-3 { animation: fadeUp 0.5s var(--ease-out-expo) 0.18s both; }
+  .anim-row-1 { animation: fadeUp 0.45s var(--ease-out-expo) 0.20s both; }
+  .anim-row-2 { animation: fadeUp 0.45s var(--ease-out-expo) 0.27s both; }
+  .anim-row-3 { animation: fadeUp 0.45s var(--ease-out-expo) 0.34s both; }
+  .anim-row-4 { animation: fadeUp 0.45s var(--ease-out-expo) 0.41s both; }
+  .anim-row-5 { animation: fadeUp 0.45s var(--ease-out-expo) 0.48s both; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--navy);
+    padding: 0 44px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 200;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--white);
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    letter-spacing: -0.2px;
+  }
+  .logo-mark {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--teal), #22d3ee);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(13,116,144,0.5);
+  }
+  .nav-links { display: flex; align-items: center; gap: 6px; }
+  .nav-links a {
+    color: rgba(255,255,255,0.55);
+    text-decoration: none; font-size: 13px; font-weight: 500;
+    padding: 5px 10px; border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+  .nav-help {
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.8);
+    font-size: 12px; font-weight: 600;
+    padding: 5px 14px; border-radius: 6px;
+    cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.15s;
+    margin-left: 8px;
+  }
+  .nav-help:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+  /* ── SECTION STEPPER ── */
+  .step-strip {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .step-strip-inner {
+    max-width: 1060px; margin: 0 auto;
+    padding: 0 44px;
+    display: flex;
+  }
+  .pstep {
+    display: flex; align-items: center; gap: 9px;
+    padding: 13px 18px 13px 0;
+    flex: 1; position: relative;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+  }
+  .pstep.active { opacity: 1; }
+  .pstep::after {
+    content: '';
+    position: absolute; right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    border-right: 1.5px solid var(--border);
+    border-top: 1.5px solid var(--border);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .pstep:last-child::after { display: none; }
+  .ps-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--slate);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .pstep.active .ps-num {
+    background: var(--teal); color: #fff;
+    box-shadow: 0 0 0 3px rgba(13,116,144,0.18);
+  }
+  .ps-name { font-size: 11.5px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .ps-sub  { font-size: 10.5px; color: var(--slate); }
+
+  /* ── SHELL ── */
+  .shell {
+    flex: 1;
+    max-width: 1060px; margin: 0 auto; width: 100%;
+    padding: 32px 44px 130px;
+    display: grid;
+    grid-template-columns: 228px 1fr;
+    gap: 24px;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: sticky; top: 96px; align-self: start;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .sc-head {
+    padding: 9px 14px;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.9px; text-transform: uppercase;
+    color: var(--slate);
+    background: var(--slate-light);
+    border-bottom: 1px solid var(--border);
+  }
+  .sc-step {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 11px 14px;
+    border-top: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .sc-step.active { background: #f0f8ff; }
+  .sc-step.active::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 2.5px;
+    background: var(--teal); border-radius: 0 2px 2px 0;
+  }
+  .scd {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid var(--border); background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9.5px; font-weight: 700; color: var(--slate); flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .sc-step.active .scd { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .sc-label { font-size: 11.5px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .sc-sub   { font-size: 10.5px; color: var(--slate); margin-top: 1px; }
+  .sc-step.active .sc-label { color: var(--teal); }
+
+  .sidebar-help {
+    background: linear-gradient(150deg, var(--navy) 0%, #1c3d60 100%);
+    border-radius: 14px; padding: 15px 14px; color: #fff;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .sidebar-help h4 { font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+  .sidebar-help p  { font-size: 11px; opacity: 0.65; line-height: 1.6; margin-bottom: 12px; }
+  .sh-btn {
+    display: block; text-align: center;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff; padding: 8px 12px; border-radius: 8px;
+    font-size: 11px; font-weight: 700; text-decoration: none; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sh-btn:hover { background: rgba(255,255,255,0.18); }
+
+  /* ── CONTENT HEADER ── */
+  .crumb {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--slate); margin-bottom: 9px;
+    font-weight: 500;
+  }
+  .crumb span { color: var(--teal); }
+  .content-title {
+    font-family: 'Lora', serif;
+    font-size: 28px; line-height: 1.2;
+    color: var(--navy); margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .content-sub {
+    font-size: 13.5px; color: var(--text-soft);
+    margin-bottom: 22px; line-height: 1.6; font-weight: 400;
+  }
+
+  /* ── QUESTION BLOCK ── */
+  .q-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(12,31,56,0.05);
+  }
+  .q-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .q-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px; color: var(--teal); margin-bottom: 3px; }
+  .q-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .q-badge {
+    background: #e8f7fb; color: var(--teal);
+    font-size: 10.5px; font-weight: 700;
+    padding: 4px 11px; border-radius: 99px;
+    white-space: nowrap; letter-spacing: 0.2px;
+    border: 1px solid #c0e8f2;
+  }
+
+  /* ── OPTION ROWS ── */
+  .options-list { padding: 6px; display: flex; flex-direction: column; gap: 3px; }
+
+  .option-item {
+    display: flex; align-items: stretch;
+    border: 1.5px solid var(--border-soft);
+    border-radius: 12px;
+    cursor: pointer;
+    overflow: hidden;
+    background: var(--slate-light);
+    position: relative;
+    transition:
+      border-color 0.22s var(--ease-out-expo),
+      background   0.22s var(--ease-out-expo),
+      box-shadow   0.22s var(--ease-out-expo),
+      transform    0.22s var(--ease-spring);
+    will-change: transform;
+  }
+  .option-item:hover {
+    border-color: #93c5fd;
+    background: #f5faff;
+    transform: translateY(-2px) scale(1.002);
+    box-shadow:
+      0 6px 20px rgba(13,116,144,0.1),
+      0 1px 4px rgba(12,31,56,0.06);
+  }
+  .option-item:active {
+    transform: translateY(0) scale(0.998);
+    transition-duration: 0.1s;
+  }
+  .option-item.selected {
+    border-color: var(--green-border);
+    background: var(--green-bg);
+    box-shadow:
+      0 4px 16px var(--green-glow),
+      0 1px 4px rgba(4,120,87,0.08);
+    transform: translateY(-1px);
+  }
+
+  /* Illustration panel */
+  .opt-illus {
+    width: 108px; min-width: 108px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--white);
+    border-right: 1.5px solid var(--border-soft);
+    padding: 10px 8px;
+    flex-shrink: 0;
+    transition: background 0.22s, border-color 0.22s;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Subtle shimmer on hover */
+  .opt-illus::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0s;
+  }
+  .option-item:hover .opt-illus::after {
+    transform: translateX(100%);
+    transition: transform 0.5s ease;
+  }
+  .option-item.selected .opt-illus {
+    background: rgba(236,253,245,0.7);
+    border-color: #a7f3d0;
+  }
+  .option-item:hover:not(.selected) .opt-illus { background: #f0f8ff; }
+  .opt-illus svg {
+    width: 84px; height: 72px;
+    transition: transform 0.25s var(--ease-spring);
+  }
+  .option-item:hover .opt-illus svg { transform: scale(1.06); }
+  .option-item.selected .opt-illus svg { transform: scale(1.03); }
+
+  /* Text body */
+  .opt-body {
+    flex: 1; padding: 0 16px;
+    display: flex; flex-direction: column; justify-content: center;
+    min-height: 84px;
+  }
+  .option-label {
+    font-size: 13.5px; font-weight: 700;
+    color: var(--navy); margin-bottom: 3px; line-height: 1.3;
+    transition: color 0.2s;
+  }
+  .option-desc {
+    font-size: 12px; color: var(--text-soft);
+    line-height: 1.55; font-weight: 400;
+    transition: color 0.2s;
+  }
+  .option-item.selected .option-label { color: #064e3b; }
+  .option-item.selected .option-desc  { color: #065f46; opacity: 0.85; }
+
+  /* Right controls */
+  .opt-right {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 14px 0 0; flex-shrink: 0;
+  }
+  .option-info-btn {
+    width: 19px; height: 19px; border-radius: 50%;
+    background: var(--border); color: var(--slate);
+    font-size: 10.5px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    cursor: help; flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+    border: 1px solid transparent;
+  }
+  .option-info-btn:hover {
+    background: var(--teal); color: #fff;
+    transform: scale(1.15);
+  }
+  .option-check {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--border); border-radius: 5px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition:
+      background 0.2s var(--ease-out-expo),
+      border-color 0.2s,
+      transform 0.2s var(--ease-spring);
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .option-item.selected .option-check {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px var(--green-glow);
+  }
+  /* Checkmark drawn via SVG path animation */
+  .check-svg {
+    position: absolute;
+    width: 12px; height: 12px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.18s, transform 0.25s var(--ease-spring);
+  }
+  .option-item.selected .check-svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* NONE OPTION */
+  .none-option {
+    margin: 3px 6px 6px;
+    padding: 11px 16px;
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; gap: 9px;
+    cursor: pointer;
+    color: var(--slate); font-size: 12.5px; font-weight: 500;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .none-option:hover { border-color: var(--teal); color: var(--teal); background: #f0f8ff; }
+  .none-icon { font-size: 14px; opacity: 0.6; }
+
+  /* CALLOUT */
+  @keyframes calloutIn {
+    from { opacity: 0; transform: translateY(-6px); max-height: 0; }
+    to   { opacity: 1; transform: translateY(0); max-height: 80px; }
+  }
+  .callout {
+    display: flex; gap: 11px;
+    background: #fffbeb; border: 1px solid #fde68a;
+    border-radius: 10px; padding: 13px 16px;
+    margin-top: 12px; align-items: flex-start;
+    animation: calloutIn 0.3s var(--ease-out-expo) both;
+  }
+  .callout-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 12.5px; color: #78350f; line-height: 1.55; }
+  .callout-text strong { font-weight: 700; color: #92400e; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 13px 44px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 200;
+    box-shadow: 0 -4px 24px rgba(12,31,56,0.08);
+  }
+  .bb-left { display: flex; align-items: center; gap: 14px; }
+  .bb-counter { font-size: 12.5px; font-weight: 600; color: var(--slate); }
+  .pip-row { display: flex; gap: 4px; align-items: center; }
+  .pip {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s var(--ease-spring);
+  }
+  .pip.done   { background: var(--green-mid); }
+  .pip.active { width: 16px; border-radius: 3px; background: var(--teal); }
+
+  .bb-right { display: flex; gap: 8px; align-items: center; }
+  .btn-back {
+    background: var(--white); border: 1.5px solid var(--border);
+    color: var(--text); padding: 8px 18px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.18s; font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .btn-back:hover { border-color: var(--teal); color: var(--teal); background: #f5faff; }
+
+  .btn-continue {
+    background: var(--navy); color: #fff; border: none;
+    padding: 10px 24px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: all 0.22s var(--ease-out-expo);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.1px;
+    position: relative; overflow: hidden;
+  }
+  .btn-continue::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--teal), #0ea5c9);
+    opacity: 0;
+    transition: opacity 0.22s;
+  }
+  .btn-continue:hover::before { opacity: 1; }
+  .btn-continue:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(13,116,144,0.35); }
+  .btn-continue:active { transform: translateY(0); }
+  .btn-continue span, .btn-continue .arr { position: relative; z-index: 1; }
+  .arr { transition: transform 0.22s var(--ease-spring); display: inline-block; }
+  .btn-continue:hover .arr { transform: translateX(3px); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-mark">🧭</div>
+    Planning Navigator
+  </div>
+  <div class="nav-links">
+    <a href="#">Guidance</a>
+    <a href="#">Resources</a>
+    <a href="#">Contact</a>
+    <button class="nav-help">Help</button>
+  </div>
+</nav>
+
+<!-- SECTION STEPPER -->
+<div class="step-strip">
+  <div class="step-strip-inner">
+    <div class="pstep active">
+      <div class="ps-num">1</div>
+      <div><div class="ps-name">Location & Property</div><div class="ps-sub">Constraints</div></div>
+    </div>
+    <div class="pstep">
+      <div class="ps-num">2</div>
+      <div><div class="ps-name">Project Questions</div><div class="ps-sub">Your plans</div></div>
+    </div>
+    <div class="pstep">
+      <div class="ps-num">3</div>
+      <div><div class="ps-name">Site Checks</div><div class="ps-sub">Site constraints</div></div>
+    </div>
+    <div class="pstep">
+      <div class="ps-num">4</div>
+      <div><div class="ps-name">Project Features</div><div class="ps-sub">Works & extensions</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-card anim-1">
+      <div class="sc-head">Your journey</div>
+      <div class="sc-step active">
+        <div class="scd">1</div>
+        <div><div class="sc-label">Location & Property</div><div class="sc-sub">Property & location constraints</div></div>
+      </div>
+      <div class="sc-step">
+        <div class="scd">2</div>
+        <div><div class="sc-label">Project Questions</div><div class="sc-sub">What you're planning to do</div></div>
+      </div>
+      <div class="sc-step">
+        <div class="scd">3</div>
+        <div><div class="sc-label">Site Checks</div><div class="sc-sub">Constraints on your site</div></div>
+      </div>
+      <div class="sc-step">
+        <div class="scd">4</div>
+        <div><div class="sc-label">Your Project Features</div><div class="sc-sub">Extensions, conversions & works</div></div>
+      </div>
+    </div>
+    <div class="sidebar-help anim-1">
+      <h4>Not sure about any of these?</h4>
+      <p>Use our interactive house tool to explore what constraints might apply to your property.</p>
+      <a class="sh-btn" href="#">Open Interactive House Tool →</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <div class="crumb anim-2">Location & Property <span>›</span> Location constraints</div>
+    <h1 class="content-title anim-2">Does any of this apply<br>to your project?</h1>
+    <p class="content-sub anim-3">Select everything that applies to your property — if nothing applies, just continue.</p>
+
+    <div class="q-block">
+      <div class="q-header">
+        <div>
+          <div class="q-label">Question 1 of 10</div>
+          <div class="q-title">Location constraints</div>
+        </div>
+        <span class="q-badge">Select all that apply</span>
+      </div>
+
+      <div class="options-list">
+
+        <!-- 1. LISTED BUILDING -->
+        <div class="option-item anim-row-1" onclick="toggleOption(this)">
+          <div class="opt-illus">
+            <svg viewBox="0 0 84 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Shadow under building -->
+              <ellipse cx="42" cy="65" rx="30" ry="5" fill="rgba(12,31,56,0.07)"/>
+              <!-- Platform steps -->
+              <polygon points="12,58 42,66 72,58 42,50" fill="#e8e2d8" stroke="#b0a090" stroke-width="0.9"/>
+              <polygon points="14,53 42,61 70,53 42,45" fill="#ddd7cc" stroke="#b0a090" stroke-width="0.8"/>
+              <polygon points="16,48 42,56 68,48 42,40" fill="#d4cec3" stroke="#b0a090" stroke-width="0.8"/>
+              <!-- Left wall -->
+              <polygon points="16,22 16,48 42,56 42,30" fill="#ccc8bc" stroke="#9c9080" stroke-width="1"/>
+              <!-- Right wall -->
+              <polygon points="42,30 42,56 68,48 68,22" fill="#e8e3d8" stroke="#9c9080" stroke-width="1"/>
+              <!-- Roof left -->
+              <polygon points="16,22 42,12 42,30 16,22" fill="#b0a898" stroke="#807870" stroke-width="1"/>
+              <!-- Roof right -->
+              <polygon points="42,12 68,22 42,30" fill="#c8c0b0" stroke="#807870" stroke-width="1"/>
+              <!-- Pediment gable left -->
+              <polygon points="22,22 34,16 42,22 34,26" fill="#a09888" stroke="#706860" stroke-width="0.8"/>
+              <!-- Columns left wall - 4 -->
+              <rect x="18" y="30" width="3.5" height="17" rx="0.8" fill="#b8b2a8" stroke="#9c9080" stroke-width="0.5"/>
+              <rect x="24" y="31" width="3.5" height="16" rx="0.8" fill="#b8b2a8" stroke="#9c9080" stroke-width="0.5"/>
+              <rect x="30" y="32" width="3.5" height="15" rx="0.8" fill="#b8b2a8" stroke="#9c9080" stroke-width="0.5"/>
+              <rect x="36" y="33" width="3.5" height="14" rx="0.8" fill="#b8b2a8" stroke="#9c9080" stroke-width="0.5"/>
+              <!-- Column caps left -->
+              <rect x="17" y="29" width="5.5" height="2" rx="0.3" fill="#a8a298"/>
+              <rect x="23" y="30" width="5.5" height="2" rx="0.3" fill="#a8a298"/>
+              <rect x="29" y="31" width="5.5" height="2" rx="0.3" fill="#a8a298"/>
+              <rect x="35" y="32" width="5.5" height="2" rx="0.3" fill="#a8a298"/>
+              <!-- Columns right wall - 3 -->
+              <rect x="46" y="28" width="3.5" height="17" rx="0.8" fill="#d0c8b8" stroke="#9c9080" stroke-width="0.5"/>
+              <rect x="53" y="26" width="3.5" height="18" rx="0.8" fill="#d0c8b8" stroke="#9c9080" stroke-width="0.5"/>
+              <rect x="60" y="24" width="3.5" height="19" rx="0.8" fill="#d0c8b8" stroke="#9c9080" stroke-width="0.5"/>
+              <!-- Column caps right -->
+              <rect x="45" y="27" width="5.5" height="2" rx="0.3" fill="#bdb8ae"/>
+              <rect x="52" y="25" width="5.5" height="2" rx="0.3" fill="#bdb8ae"/>
+              <rect x="59" y="23" width="5.5" height="2" rx="0.3" fill="#bdb8ae"/>
+              <!-- Architrave left -->
+              <rect x="16" y="28" width="26" height="2.5" rx="0.3" fill="#a09888"/>
+              <!-- Architrave right -->
+              <rect x="42" y="26" width="27" height="2.5" rx="0.3" fill="#b8b0a0"/>
+              <!-- Door arch left -->
+              <path d="M30,48 L30,40 Q34,36 38,40 L38,48 Z" fill="#7a6e60" stroke="#605848" stroke-width="0.8"/>
+              <circle cx="37" cy="44" r="0.8" fill="#c8a870"/>
+              <!-- Windows left - 2 -->
+              <rect x="18" y="22" width="6" height="5" rx="0.5" fill="#c8e4f8" stroke="#8ac8f0" stroke-width="0.8"/>
+              <rect x="27" y="23" width="6" height="5" rx="0.5" fill="#c8e4f8" stroke="#8ac8f0" stroke-width="0.8"/>
+              <!-- Windows right - 2 -->
+              <rect x="46" y="19" width="6" height="5" rx="0.5" fill="#d4ebf8" stroke="#8ac8f0" stroke-width="0.8"/>
+              <rect x="55" y="17" width="6" height="5" rx="0.5" fill="#d4ebf8" stroke="#8ac8f0" stroke-width="0.8"/>
+              <!-- Grade badge -->
+              <circle cx="68" cy="10" r="8" fill="#fef8e7" stroke="#e8b800" stroke-width="1.5"/>
+              <text x="68" y="14" text-anchor="middle" font-size="9" fill="#a07800" font-family="serif">★</text>
+            </svg>
+          </div>
+          <div class="opt-body">
+            <div class="option-label">Listed building</div>
+            <div class="option-desc">Your property is officially recognised for its special architectural or historic interest.</div>
+          </div>
+          <div class="opt-right">
+            <div class="option-info-btn" title="Learn more">?</div>
+            <div class="option-check">
+              <svg class="check-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. CONSERVATION AREA -->
+        <div class="option-item anim-row-2" onclick="toggleOption(this)">
+          <div class="opt-illus">
+            <svg viewBox="0 0 84 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="42" cy="66" rx="32" ry="5" fill="rgba(12,31,56,0.06)"/>
+              <!-- Ground / path -->
+              <polygon points="8,58 42,67 76,58 42,49" fill="#c8d8b0" stroke="#90a878" stroke-width="0.8"/>
+              <!-- Stone path -->
+              <ellipse cx="34" cy="62" rx="5" ry="2" fill="#d8d0c0" stroke="#b0a890" stroke-width="0.5"/>
+              <ellipse cx="44" cy="64" rx="4" ry="1.5" fill="#d8d0c0" stroke="#b0a890" stroke-width="0.5"/>
+              <!-- House 1 - receding left -->
+              <polygon points="6,34 6,57 24,63 24,40" fill="#b8c8a8" stroke="#809878" stroke-width="0.8" opacity="0.75"/>
+              <polygon points="24,40 24,63 40,57 40,34" fill="#ccd8bc" stroke="#809878" stroke-width="0.8" opacity="0.75"/>
+              <polygon points="6,34 24,26 24,40 6,34" fill="#8ea880" stroke="#6a8060" stroke-width="0.8" opacity="0.75"/>
+              <polygon points="24,26 40,34 24,40" fill="#a0b890" stroke="#6a8060" stroke-width="0.8" opacity="0.75"/>
+              <rect x="26" y="34" width="7" height="7" rx="0.5" fill="#c0dcf0" stroke="#8ac0e8" stroke-width="0.7" opacity="0.85"/>
+              <rect x="15" y="38" width="6" height="6" rx="0.5" fill="#c0dcf0" stroke="#8ac0e8" stroke-width="0.7" opacity="0.85"/>
+              <rect x="18" y="50" width="5" height="7" rx="0.8" fill="#706050" opacity="0.8"/>
+              <!-- Chimney 1 -->
+              <rect x="22" y="21" width="4" height="7" rx="0.8" fill="#90a080" stroke="#6a8060" stroke-width="0.7" opacity="0.8"/>
+              <!-- House 2 - main -->
+              <polygon points="26,26 26,56 50,64 50,34" fill="#c0cab0" stroke="#809878" stroke-width="1"/>
+              <polygon points="50,34 50,64 72,56 72,26" fill="#d8e2ca" stroke="#809878" stroke-width="1"/>
+              <polygon points="26,26 50,16 50,34 26,26" fill="#8ea880" stroke="#608060" stroke-width="1"/>
+              <polygon points="50,16 72,26 50,34" fill="#a0ba90" stroke="#608060" stroke-width="1"/>
+              <!-- Chimney main -->
+              <rect x="44" y="10" width="5" height="8" rx="0.8" fill="#78986a" stroke="#508048" stroke-width="0.8"/>
+              <rect x="43" y="9" width="7" height="2" rx="0.5" fill="#60805a"/>
+              <!-- Door main -->
+              <path d="M37,56 L37,47 Q42,43 47,47 L47,56 Z" fill="#584838" stroke="#402e20" stroke-width="0.8"/>
+              <circle cx="46" cy="52" r="1" fill="#c8a050"/>
+              <!-- Windows main left wall -->
+              <rect x="29" y="34" width="9" height="8" rx="0.5" fill="#c4e0f4" stroke="#88c4ee" stroke-width="0.8"/>
+              <rect x="29" y="45" width="6" height="6" rx="0.5" fill="#c4e0f4" stroke="#88c4ee" stroke-width="0.8"/>
+              <!-- Windows main right wall -->
+              <rect x="54" y="30" width="8" height="7" rx="0.5" fill="#d0e8f8" stroke="#88c4ee" stroke-width="0.8"/>
+              <rect x="62" y="28" width="7" height="7" rx="0.5" fill="#d0e8f8" stroke="#88c4ee" stroke-width="0.8"/>
+              <!-- Garden gate post -->
+              <rect x="21" y="55" width="2.5" height="10" rx="0.5" fill="#908070"/>
+              <rect x="25" y="55" width="2.5" height="10" rx="0.5" fill="#908070"/>
+              <!-- Gate bars -->
+              <rect x="21" y="56" width="6.5" height="1" rx="0.3" fill="#a09080"/>
+              <rect x="21" y="59" width="6.5" height="1" rx="0.3" fill="#a09080"/>
+              <rect x="21" y="62" width="6.5" height="1" rx="0.3" fill="#a09080"/>
+              <!-- Tree -->
+              <ellipse cx="74" cy="40" rx="9" ry="12" fill="#58a848" stroke="#388030" stroke-width="1.2"/>
+              <ellipse cx="74" cy="36" rx="7" ry="9" fill="#68b858" stroke="#388030" stroke-width="0.8"/>
+              <rect x="72" y="50" width="4" height="8" rx="1" fill="#8a6030"/>
+              <!-- Conservation badge -->
+              <circle cx="10" cy="10" r="8" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+              <text x="10" y="14" text-anchor="middle" font-size="10" fill="#065f46">✦</text>
+            </svg>
+          </div>
+          <div class="opt-body">
+            <div class="option-label">Conservation area</div>
+            <div class="option-desc">Your property is in an area recognised for its special character or historic importance.</div>
+          </div>
+          <div class="opt-right">
+            <div class="option-info-btn" title="Learn more">?</div>
+            <div class="option-check">
+              <svg class="check-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ARTICLE 4 -->
+        <div class="option-item anim-row-3" onclick="toggleOption(this)">
+          <div class="opt-illus">
+            <svg viewBox="0 0 84 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="42" cy="65" rx="28" ry="5" fill="rgba(12,31,56,0.07)"/>
+              <!-- Ground -->
+              <polygon points="14,56 42,64 70,56 42,48" fill="#e4e4e4" stroke="#aaaaaa" stroke-width="0.8"/>
+              <!-- Left wall -->
+              <polygon points="14,28 14,56 42,64 42,36" fill="#ccd4dc" stroke="#94a3b8" stroke-width="1"/>
+              <!-- Right wall -->
+              <polygon points="42,36 42,64 70,56 70,28" fill="#e0e8f0" stroke="#94a3b8" stroke-width="1"/>
+              <!-- Left roof -->
+              <polygon points="14,28 42,16 42,36 14,28" fill="#90a0b0" stroke="#607080" stroke-width="1"/>
+              <!-- Right roof -->
+              <polygon points="42,16 70,28 42,36" fill="#a8bac8" stroke="#607080" stroke-width="1"/>
+              <!-- Roof ridge highlight -->
+              <line x1="42" y1="16" x2="42" y2="36" stroke="#78909f" stroke-width="0.8"/>
+              <!-- Chimney -->
+              <rect x="36" y="10" width="5" height="8" rx="0.8" fill="#7a909f" stroke="#607080" stroke-width="0.8"/>
+              <rect x="35" y="9" width="7" height="2" rx="0.4" fill="#6a8090"/>
+              <!-- Fascia board left -->
+              <rect x="13" y="27" width="29" height="2" rx="0.3" fill="#80909a"/>
+              <!-- Fascia board right -->
+              <rect x="42" y="27" width="29" height="2" rx="0.3" fill="#96a8b5"/>
+              <!-- Door -->
+              <rect x="34" y="50" width="9" height="14" rx="1" fill="#6a7e8c" stroke="#4a6070" stroke-width="0.8"/>
+              <rect x="34" y="50" width="9" height="7" rx="1" fill="#7a8e9c" stroke="#4a6070" stroke-width="0.5"/>
+              <circle cx="42" cy="57" r="1.1" fill="#b8c8d0"/>
+              <!-- Windows left -->
+              <rect x="17" y="36" width="10" height="9" rx="0.8" fill="#c4dcf0" stroke="#8ab8e0" stroke-width="0.8"/>
+              <line x1="22" y1="36" x2="22" y2="45" stroke="#8ab8e0" stroke-width="0.5"/>
+              <line x1="17" y1="40.5" x2="27" y2="40.5" stroke="#8ab8e0" stroke-width="0.5"/>
+              <!-- Windows right -->
+              <rect x="50" y="32" width="10" height="9" rx="0.8" fill="#d0e4f4" stroke="#8ab8e0" stroke-width="0.8"/>
+              <line x1="55" y1="32" x2="55" y2="41" stroke="#8ab8e0" stroke-width="0.5"/>
+              <line x1="50" y1="36.5" x2="60" y2="36.5" stroke="#8ab8e0" stroke-width="0.5"/>
+              <!-- Article 4 notice - formal paper document -->
+              <rect x="48" y="36" width="26" height="20" rx="2.5" fill="#fffef5" stroke="#d4a800" stroke-width="1.5" filter="url(#shadow)"/>
+              <!-- Header bar of notice -->
+              <rect x="48" y="36" width="26" height="5" rx="2.5 2.5 0 0" fill="#f5d800" stroke="#d4a800" stroke-width="0"/>
+              <rect x="48" y="38.5" width="26" height="2.5" fill="#f5d800"/>
+              <text x="61" y="41" text-anchor="middle" font-size="4.5" font-weight="800" fill="#7a5000" font-family="sans-serif">ARTICLE 4</text>
+              <!-- Lines of text on notice -->
+              <rect x="51" y="44" width="18" height="1.5" rx="0.5" fill="#c8b060" opacity="0.6"/>
+              <rect x="51" y="47" width="14" height="1.5" rx="0.5" fill="#c8b060" opacity="0.5"/>
+              <rect x="51" y="50" width="16" height="1.5" rx="0.5" fill="#c8b060" opacity="0.5"/>
+              <!-- Notice pin -->
+              <circle cx="61" cy="36.5" r="2.5" fill="#ef4444" stroke="#b91c1c" stroke-width="0.8"/>
+              <circle cx="61" cy="36.5" r="1" fill="#fca5a5"/>
+              <!-- Shadow filter -->
+              <defs>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.15)"/>
+                </filter>
+              </defs>
+            </svg>
+          </div>
+          <div class="opt-body">
+            <div class="option-label">Article 4 restriction</div>
+            <div class="option-desc">Your local council has removed some standard permitted development rights on this property.</div>
+          </div>
+          <div class="opt-right">
+            <div class="option-info-btn" title="Learn more">?</div>
+            <div class="option-check">
+              <svg class="check-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. PROTECTED AREA -->
+        <div class="option-item anim-row-4" onclick="toggleOption(this)">
+          <div class="opt-illus">
+            <svg viewBox="0 0 84 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Sky -->
+              <rect x="0" y="0" width="84" height="72" fill="#eef7ff" rx="0"/>
+              <!-- Clouds -->
+              <ellipse cx="14" cy="12" rx="10" ry="5" fill="white" opacity="0.9"/>
+              <ellipse cx="20" cy="10" rx="8" ry="5" fill="white" opacity="0.9"/>
+              <ellipse cx="66" cy="14" rx="9" ry="4" fill="white" opacity="0.8"/>
+              <ellipse cx="72" cy="12" rx="7" ry="4" fill="white" opacity="0.8"/>
+              <!-- Far mountain range -->
+              <polygon points="10,44 26,18 42,44" fill="#c4d8b8" stroke="#90b080" stroke-width="0.8"/>
+              <polygon points="26,18 32,28 20,28" fill="#e8f4e0" stroke="#a0c090" stroke-width="0.5"/>
+              <polygon points="34,44 52,14 70,44" fill="#b8cca8" stroke="#80a070" stroke-width="0.8"/>
+              <polygon points="52,14 58,26 46,26" fill="#e4f0dc" stroke="#90b080" stroke-width="0.5"/>
+              <!-- Mid hills -->
+              <ellipse cx="20" cy="54" rx="22" ry="14" fill="#88c878" stroke="#60a850" stroke-width="0.8"/>
+              <ellipse cx="64" cy="52" rx="24" ry="13" fill="#78be68" stroke="#60a850" stroke-width="0.8"/>
+              <!-- Foreground meadow -->
+              <ellipse cx="42" cy="64" rx="42" ry="12" fill="#6ab858" stroke="#50a040" stroke-width="0.8"/>
+              <!-- River/stream -->
+              <path d="M20,58 Q30,54 42,58 Q54,62 64,58" stroke="#78c8f8" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+              <!-- Trees cluster -->
+              <ellipse cx="10" cy="52" rx="6" ry="8" fill="#348830" stroke="#208020" stroke-width="1"/>
+              <ellipse cx="18" cy="56" rx="5" ry="7" fill="#3a9838" stroke="#208020" stroke-width="0.8"/>
+              <rect x="8" y="58" width="3" height="6" rx="0.5" fill="#6a4020"/>
+              <rect x="17" y="61" width="3" height="5" rx="0.5" fill="#6a4020"/>
+              <!-- Far trees right -->
+              <ellipse cx="74" cy="50" rx="6" ry="8" fill="#3a9838" stroke="#208020" stroke-width="0.8"/>
+              <rect x="72" y="56" width="3" height="6" rx="0.5" fill="#6a4020"/>
+              <!-- Small farmhouse -->
+              <polygon points="38,52 38,60 48,63 48,55" fill="#d8c8b0" stroke="#a09080" stroke-width="0.8"/>
+              <polygon points="38,48 48,51 38,52" fill="#a89080" stroke="#807060" stroke-width="0.8"/>
+              <!-- National Park shield -->
+              <path d="M10,6 Q10,4 12,4 L20,4 Q22,4 22,6 L22,16 Q22,20 16,22 Q10,20 10,16 Z" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="16" y="15" text-anchor="middle" font-size="7" font-weight="700" fill="#1d4ed8" font-family="sans-serif">NP</text>
+            </svg>
+          </div>
+          <div class="opt-body">
+            <div class="option-label">Protected area</div>
+            <div class="option-desc">National Park, Area of Outstanding Natural Beauty, or World Heritage Site.</div>
+          </div>
+          <div class="opt-right">
+            <div class="option-info-btn" title="Learn more">?</div>
+            <div class="option-check">
+              <svg class="check-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. FLOOD RISK -->
+        <div class="option-item anim-row-5" onclick="toggleOption(this)">
+          <div class="opt-illus">
+            <svg viewBox="0 0 84 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="water" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#60b8f8" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#3890d8" stop-opacity="0.95"/>
+                </linearGradient>
+              </defs>
+              <!-- Ground (mostly submerged) -->
+              <polygon points="12,54 42,62 72,54 42,46" fill="#d8d0c0" stroke="#a09880" stroke-width="0.8"/>
+              <!-- House left wall -->
+              <polygon points="12,22 12,54 42,62 42,30" fill="#c8d0d8" stroke="#8898a8" stroke-width="1"/>
+              <!-- House right wall -->
+              <polygon points="42,30 42,62 72,54 72,22" fill="#dce4ec" stroke="#8898a8" stroke-width="1"/>
+              <!-- Left roof -->
+              <polygon points="12,22 42,10 42,30 12,22" fill="#8898a8" stroke="#607080" stroke-width="1"/>
+              <!-- Right roof -->
+              <polygon points="42,10 72,22 42,30" fill="#a0b0c0" stroke="#607080" stroke-width="1"/>
+              <!-- Roof ridge -->
+              <line x1="42" y1="10" x2="42" y2="30" stroke="#788898" stroke-width="0.8"/>
+              <!-- Chimney -->
+              <rect x="36" y="4" width="5" height="9" rx="0.8" fill="#788898" stroke="#607080" stroke-width="0.8"/>
+              <rect x="35" y="3" width="7" height="2.5" rx="0.4" fill="#687888"/>
+              <!-- Door (half submerged) -->
+              <rect x="34" y="50" width="9" height="12" rx="1" fill="#5a7080" stroke="#405060" stroke-width="0.8"/>
+              <!-- Windows left -->
+              <rect x="16" y="30" width="10" height="9" rx="0.8" fill="#c0d8f0" stroke="#80b8e0" stroke-width="0.8"/>
+              <line x1="21" y1="30" x2="21" y2="39" stroke="#80b8e0" stroke-width="0.5"/>
+              <line x1="16" y1="34.5" x2="26" y2="34.5" stroke="#80b8e0" stroke-width="0.5"/>
+              <!-- Windows right -->
+              <rect x="50" y="26" width="10" height="9" rx="0.8" fill="#cce0f4" stroke="#80b8e0" stroke-width="0.8"/>
+              <line x1="55" y1="26" x2="55" y2="35" stroke="#80b8e0" stroke-width="0.5"/>
+              <line x1="50" y1="30.5" x2="60" y2="30.5" stroke="#80b8e0" stroke-width="0.5"/>
+              <!-- Flood water layer -->
+              <path d="M4,54 Q14,48 24,54 Q34,60 44,54 Q54,48 64,54 Q74,60 82,54 L82,72 L4,72 Z" fill="url(#water)" opacity="0.88"/>
+              <!-- Water surface ripples -->
+              <path d="M8,56 Q18,52 28,56 Q38,60 48,56 Q58,52 68,56 Q74,58 80,56" stroke="#90d0ff" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+              <path d="M4,60 Q16,57 28,60 Q40,63 52,60 Q64,57 76,60" stroke="#78c4ff" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.5"/>
+              <!-- Debris in water -->
+              <rect x="18" y="57" width="6" height="2" rx="0.5" fill="#a09080" opacity="0.6" transform="rotate(-8 21 58)"/>
+              <rect x="56" y="59" width="5" height="1.5" rx="0.5" fill="#a09080" opacity="0.5" transform="rotate(5 58 60)"/>
+              <!-- Warning triangle -->
+              <polygon points="66,8 76,24 56,24" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8"/>
+              <rect x="65" y="14" width="2" height="5" rx="0.5" fill="#b45309"/>
+              <circle cx="66" cy="21" r="1.2" fill="#b45309"/>
+            </svg>
+          </div>
+          <div class="opt-body">
+            <div class="option-label">Flood risk zone</div>
+            <div class="option-desc">Your property falls within a flood risk zone identified by the Environment Agency.</div>
+          </div>
+          <div class="opt-right">
+            <div class="option-info-btn" title="Learn more">?</div>
+            <div class="option-check">
+              <svg class="check-svg" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /options-list -->
+
+      <div class="none-option" onclick="clearAll()">
+        <span class="none-icon">⊘</span>
+        None of these apply to my property — skip this section
+      </div>
+
+    </div><!-- /q-block -->
+
+    <div class="callout" id="callout" style="display:none;">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text"><strong>Heads up:</strong> Properties with these constraints may have additional requirements. Full planning permission is more likely to be needed. We'll guide you through what this means in your results.</div>
+    </div>
+
+  </main>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="bb-left">
+    <span class="bb-counter">Question 1 of 10</span>
+    <div class="pip-row">
+      <div class="pip active"></div>
+      <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+      <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+      <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+    </div>
+  </div>
+  <div class="bb-right">
+    <button class="btn-back">← Back</button>
+    <button class="btn-continue"><span>Continue</span> <span class="arr">→</span></button>
+  </div>
+</div>
+
+<script>
+  function toggleOption(el) {
+    el.classList.toggle('selected');
+    checkCallout();
+  }
+  function clearAll() {
+    document.querySelectorAll('.option-item.selected').forEach(el => el.classList.remove('selected'));
+    checkCallout();
+  }
+  function checkCallout() {
+    const any = document.querySelectorAll('.option-item.selected').length > 0;
+    const c = document.getElementById('callout');
+    if (any && c.style.display === 'none') {
+      c.style.display = 'flex';
+    } else if (!any) {
+      c.style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>
